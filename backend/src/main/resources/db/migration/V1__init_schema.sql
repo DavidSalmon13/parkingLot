@@ -32,8 +32,12 @@ ALTER TABLE cars ADD CONSTRAINT chk_car_id_length CHECK (length(id) = 6);
 
 CREATE TABLE car_assignments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  car_id VARCHAR(6) NOT NULL REFERENCES cars(id),
-  spot_id UUID NOT NULL REFERENCES parking_spots(id),
+  -- ON DELETE CASCADE: a spot/lot can be deleted once unoccupied (spec §3.4/§3.8)
+  -- even if cars were parked there in the past — the active-assignment check is
+  -- what actually protects data, not this FK. Without CASCADE, any spot or car
+  -- that ever had a completed (non-active) assignment could never be deleted.
+  car_id VARCHAR(6) NOT NULL REFERENCES cars(id) ON DELETE CASCADE,
+  spot_id UUID NOT NULL REFERENCES parking_spots(id) ON DELETE CASCADE,
   assigned_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   removed_at TIMESTAMPTZ,
   created_by_user_id UUID,

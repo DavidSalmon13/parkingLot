@@ -20,7 +20,7 @@ Rule for working through this file: **find the first unchecked `[ ]` phase below
   - Done & verified locally (2026-09-14): `WebConfig` (CORS), `SecurityConfig` (permitAll), stub `GET /api/lots` all wired and confirmed end-to-end against a real local Postgres — `curl` returns `200 []`, CORS correctly allows `localhost:5173` and rejects other origins, and `frontend/src/api/client.ts`'s `ApiError` interceptor verified against live success/error responses.
   - §1.3 Railway provisioning was carved out of this phase — see phase 10 at the bottom of this checklist. That's a manual, human-only task (needs an interactive `railway login` and creates billed cloud resources), so it isn't part of what gets automated here.
 - [x] 2. Data Models — all four entities, repositories, Flyway migrations, constraints verified in psql
-- [ ] 3. API Design — exception scaffolding + all endpoints (lots, spots, cars, assign/remove), each tested with curl
+- [x] 3. API Design — exception scaffolding + all endpoints (lots, spots, cars, assign/remove), each tested with curl
 - [ ] 4. Frontend Architecture — component tree, Zustand store, TanStack Query, visual hierarchy, clarity enhancements, animations (dashboard renders real data)
 - [ ] 5. UX Flows — view/locate/add/remove/expand/admin flows wired and manually verified
 - [ ] 6. Real-Time Strategy — WebSocket transport, message contract, frontend socket hook, polling fallback (verify with two browser tabs)

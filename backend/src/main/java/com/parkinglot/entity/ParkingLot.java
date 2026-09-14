@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -36,6 +37,7 @@ public class ParkingLot {
     // Deliberately no cascade/orphanRemoval — spot deletion goes through
     // ParkingSpotService's occupancy checks (§3.8), never through this lot-side collection.
     @OneToMany(mappedBy = "lot", fetch = FetchType.LAZY)
+    @OrderBy("row asc, position asc")
     private List<ParkingSpot> spots = new ArrayList<>();
 
     @CreationTimestamp
