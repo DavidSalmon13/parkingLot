@@ -12,9 +12,9 @@ type Tab = 'existing' | 'new';
 
 const ERROR_COPY: Record<string, string> = {
   CAR_NOT_FOUND: "No car with that ID — switch to 'New car' to register it.",
-  CAR_ALREADY_PARKED: 'That car is already parked elsewhere.',
   CAR_ID_EXISTS: "This ID is already registered — switch to 'Existing car'.",
   SPOT_OCCUPIED: 'This spot was just taken by someone else.',
+  SPOT_NOT_FOUND: 'This spot no longer exists — it was removed by someone else. Refreshing...',
 };
 
 export function AddCarModal({ spot, onClose }: AddCarModalProps) {

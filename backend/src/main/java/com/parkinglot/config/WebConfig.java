@@ -19,6 +19,10 @@ public class WebConfig {
         config.setAllowedOrigins(java.util.List.of(allowedOrigin));
         config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE"));
         config.setAllowedHeaders(java.util.List.of("*"));
+        // SockJS's XHR-streaming fallback (used by the /ws endpoint) sends requests
+        // with withCredentials=true, which requires an explicit (non-wildcard) origin
+        // plus this flag — both already true here.
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", config);

@@ -2,6 +2,7 @@ package com.parkinglot.service;
 
 import com.parkinglot.dto.CarSummaryResponse;
 import com.parkinglot.dto.CreateSpotRequest;
+import com.parkinglot.dto.GridRequest;
 import com.parkinglot.dto.SpotResponse;
 import com.parkinglot.dto.UpdateSpotRequest;
 import com.parkinglot.entity.CarAssignment;
@@ -12,6 +13,7 @@ import com.parkinglot.exception.SpotLabelTakenException;
 import com.parkinglot.exception.SpotOccupiedException;
 import com.parkinglot.repository.CarAssignmentRepository;
 import com.parkinglot.repository.ParkingSpotRepository;
+import com.parkinglot.websocket.LotUpdatePublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +27,13 @@ public class ParkingSpotService {
 
     private final ParkingSpotRepository spotRepo;
     private final CarAssignmentRepository assignmentRepo;
+    private final LotUpdatePublisher lotUpdatePublisher;
 
-    public ParkingSpotService(ParkingSpotRepository spotRepo, CarAssignmentRepository assignmentRepo) {
+    public ParkingSpotService(ParkingSpotRepository spotRepo, CarAssignmentRepository assignmentRepo,
+                               LotUpdatePublisher lotUpdatePublisher) {
         this.spotRepo = spotRepo;
         this.assignmentRepo = assignmentRepo;
+        this.lotUpdatePublisher = lotUpdatePublisher;
     }
 
     // The single place that computes a spot's derived status/car — every
@@ -50,17 +55,21 @@ public class ParkingSpotService {
     }
 
     @Transactional
-    public List<SpotResponse> generateGrid(ParkingLot lot, List<String> rows, int spotsPerRow) {
+    public List<SpotResponse> generateGrid(ParkingLot lot, List<GridRequest.RowSpec> rows) {
         List<ParkingSpot> created = new ArrayList<>();
-        for (String row : rows) {
-            for (int position = 1; position <= spotsPerRow; position++) {
-                String label = row + position;
+        for (GridRequest.RowSpec row : rows) {
+            int startPosition = spotRepo.findMaxPositionByLotIdAndRow(lot.getId(), row.label()).orElse(0) + 1;
+            int endPosition = startPosition + row.count() - 1;
+            for (int position = startPosition; position <= endPosition; position++) {
+                String label = row.label() + position;
                 if (!spotRepo.existsByLotIdAndLabel(lot.getId(), label)) {
-                    created.add(spotRepo.save(new ParkingSpot(lot, label, row, position)));
+                    created.add(spotRepo.save(new ParkingSpot(lot, label, row.label(), position)));
                 }
             }
         }
-        return created.stream().map(this::toDto).toList();
+        List<SpotResponse> dtos = created.stream().map(this::toDto).toList();
+        dtos.forEach(dto -> lotUpdatePublisher.publishSpotCreated(lot.getId(), dto));
+        return dtos;
     }
 
     @Transactional
@@ -69,7 +78,9 @@ public class ParkingSpotService {
             throw new SpotLabelTakenException(req.label());
         }
         ParkingSpot saved = spotRepo.save(new ParkingSpot(lot, req.label(), req.row(), req.position()));
-        return toDto(saved);
+        SpotResponse dto = toDto(saved);
+        lotUpdatePublisher.publishSpotCreated(lot.getId(), dto);
+        return dto;
     }
 
     @Transactional
@@ -81,7 +92,9 @@ public class ParkingSpotService {
         spot.setLabel(req.label());
         spot.setRow(req.row());
         spot.setPosition(req.position());
-        return toDto(spot);
+        SpotResponse dto = toDto(spot);
+        lotUpdatePublisher.publishSpotUpdated(spot.getLot().getId(), dto);
+        return dto;
     }
 
     @Transactional
@@ -90,6 +103,8 @@ public class ParkingSpotService {
         assignmentRepo.findBySpotIdAndRemovedAtIsNull(id).ifPresent(a -> {
             throw new SpotOccupiedException("Remove the car from this spot before deleting it.", a.getCar().getId());
         });
+        UUID lotId = spot.getLot().getId();
         spotRepo.delete(spot);
+        lotUpdatePublisher.publishSpotDeleted(lotId, id);
     }
 }

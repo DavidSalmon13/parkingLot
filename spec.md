@@ -203,21 +203,22 @@ Creates a lot, optionally bulk-generating its spot grid in the same call.
 ```json
 {
   "name": "North Garage",
-  "grid": { "rows": ["A", "B"], "spotsPerRow": 10 }
+  "grid": { "rows": [{ "label": "A", "count": 10 }, { "label": "B", "count": 15 }] }
 }
 ```
-`grid` is optional — omit it to create an empty lot and add spots later via §3.4/3.5.
+`grid` is optional — omit it to create an empty lot and add spots later via §3.4/3.5. Each row picks its own spot count (added one row at a time in the UI — see §5.7), rather than one uniform count applied to every row. `count` spots are appended starting right after wherever that row currently ends (position 0 for a brand-new row, so it simply starts at 1) — the identical mechanism §3.5 uses to extend a row that already exists.
 
 **Validation**:
 - `name`: required, 1–100 chars, unique (case-insensitive) — else `409` with `{"error": "LOT_NAME_TAKEN"}`.
-- `grid.rows`: if present, 1–26 entries, each 1–10 chars, unique.
-- `grid.spotsPerRow`: if present, integer 1–200.
+- `grid.rows`: if present, 1–26 entries.
+- `grid.rows[].label`: required, 1–10 chars.
+- `grid.rows[].count`: required, integer 1–200.
 
 **Response `201`**: the created lot in the shape of §3.1's array element.
 
 **Response `400`** (invalid grid):
 ```json
-{ "error": "VALIDATION_ERROR", "details": ["spotsPerRow must be between 1 and 200"] }
+{ "error": "VALIDATION_ERROR", "details": ["count must be between 1 and 200"] }
 ```
 
 ### 3.3 `PUT /api/lots/{id}`
@@ -239,9 +240,11 @@ Renames a lot. Does not touch spots.
 
 ### 3.5 `POST /api/lots/{id}/spots/generate`
 
-Bulk-generates spots for an existing lot from a grid definition. Additive — does not remove existing spots; skips labels that already exist.
+Bulk-generates spots for an existing lot from a grid definition. Additive — never removes or renumbers existing spots. A `label` that names a row already present in the lot **extends that row**: `count` new spots are appended starting right after its current highest position, rather than restarting at position 1. A `label` not yet present in the lot creates a brand-new row of `count` spots. Either way, any individual label that happens to already exist is skipped rather than erroring.
 
-**Request**: `{ "rows": ["C"], "spotsPerRow": 5 }`
+**Request — new row**: `{ "rows": [{ "label": "C", "count": 5 }] }` (lot has no row "C" yet → creates C1–C5)
+
+**Request — extend an existing row**: `{ "rows": [{ "label": "A", "count": 3 }] }` (row "A" already ends at A10 → creates A11–A13)
 
 **Response `201`**: array of newly created spots (shape as in §3.1).
 
@@ -469,12 +472,13 @@ Implemented with Tailwind's `transition`/`animate-*` utilities (or a small depen
 
 ### 5.7 Creating a lot with a generated grid (Admin)
 1. Admin navigates to `<AdminPanel>` → "New Lot".
-2. Enters lot name, row letters (e.g. `A,B,C`), spots per row (e.g. `10`).
+2. Enters lot name, then builds the grid row by row: picks a spot count, the row label is generated automatically (next letter after the last row added — not editable, no typing needed) — "Add" stages it, repeatable with a different count per row (e.g. Row A: 10 spots, Row B: 15 spots). Staged rows can be removed before submitting.
 3. Submits → `POST /api/lots` with `grid`.
-4. Redirected to the lot's editor showing the 30 generated spots (A1–A10, B1–B10, C1–C10); can add/relabel/remove individual spots from here.
+4. Redirected to the lot's editor showing the generated spots (e.g. A1–A10, B1–B15); can add/relabel/remove individual spots from here. The same row builder is reused by §5.8's "Generate spots" form on an existing lot.
 
 ### 5.8 Editing/deleting spots (Admin)
-- Add one-off spot: `<LotEditor>` → "Add spot" → `POST /api/lots/{id}/spots`.
+- Add spots via the grid builder: `<LotEditor>` → "Generate spots" — the same row builder as §5.7's new-lot flow, with one addition: since the lot already has rows, admin can toggle between "New row" (auto-labeled, as in §5.7) and "Add to existing row" (pick one of the lot's current row labels from a dropdown, pick a count) — the picked row is extended with that many more spots starting right after its current highest position, no relabeling or renumbering of what's already there. `POST /api/lots/{id}/spots/generate`.
+- Add one-off spot: `<LotEditor>` → "Add custom spot" — for a single spot outside the row/grid convention (e.g. a "VIP-1" label) → `POST /api/lots/{id}/spots` (§3.6), unaffected by the row-builder changes above.
 - Relabel: inline edit on a spot row → `PUT /api/spots/{id}`.
 - Delete: delete icon on a spot row → `DELETE /api/spots/{id}`; if occupied, UI surfaces the `SPOT_OCCUPIED` error with the blocking car's ID rather than a generic failure.
 
@@ -530,7 +534,7 @@ Other event types: `SPOT_CREATED`, `SPOT_DELETED`, `LOT_CREATED`, `LOT_UPDATED`,
 | 7.4 | Delete a lot/spot that has an occupied spot | `409 LOT_HAS_OCCUPIED_SPOTS` / `409 SPOT_OCCUPIED` (§3.4, §3.8) — deletion blocked until vacated; no cascading auto-removal. |
 | 7.5 | Race: two employees assign different cars to the same empty spot simultaneously | Both requests reach the service layer; the DB partial unique index on `spot_id` guarantees only one `INSERT` succeeds inside its transaction. The losing request's transaction fails with a constraint violation, which the service layer catches and translates to `409 SPOT_OCCUPIED` — no corrupted or duplicate assignment state is possible. |
 | 7.6 | Race: two employees assign the same car ID to two different spots simultaneously | Same mechanism via the partial unique index on `car_id` — one succeeds, the other gets `409 CAR_ALREADY_PARKED`. |
-| 7.7 | Invalid grid generation input (e.g. `spotsPerRow: 0` or `500`) | `400 VALIDATION_ERROR` with field-level details (§3.2). |
+| 7.7 | Invalid grid generation input (e.g. `count: 0` or `500`) | `400 VALIDATION_ERROR` with field-level details (§3.2). |
 | 7.8 | Car ID not exactly 6 characters | `400 VALIDATION_ERROR`, `{"details": ["id must be exactly 6 characters"]}`. |
 | 7.9 | Duplicate spot label within the same lot | `409 SPOT_LABEL_TAKEN` (§3.6, §3.7) — labels are unique per-lot, not globally (two different lots can both have an "A1"). |
 | 7.10 | Duplicate lot name | `409 LOT_NAME_TAKEN` (§3.2, §3.3), case-insensitive comparison. |

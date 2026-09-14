@@ -1,0 +1,17 @@
+# Local-only profile (spec §8 perf verification). Activate with SPRING_PROFILES_ACTIVE=dev.
+# Adds a second Flyway location carrying the dev seed data (5 lots x 60 spots) and turns on
+# Hibernate query statistics so N+1 regressions on GET /api/lots are visible in the logs.
+# Never active in a real deployment — Railway won't set this profile.
+spring:
+  flyway:
+    locations: classpath:db/migration,classpath:db/dev-seed
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        generate_statistics: true
+        format_sql: false
+
+logging:
+  level:
+    org.hibernate.stat: debug

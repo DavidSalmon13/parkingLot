@@ -12,6 +12,7 @@ import com.parkinglot.exception.SpotNotOccupiedException;
 import com.parkinglot.exception.SpotOccupiedException;
 import com.parkinglot.repository.CarAssignmentRepository;
 import com.parkinglot.repository.CarRepository;
+import com.parkinglot.websocket.LotUpdatePublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +26,14 @@ public class AssignmentService {
     private final CarRepository carRepo;
     private final CarAssignmentRepository assignmentRepo;
     private final ParkingSpotService spotService;
+    private final LotUpdatePublisher lotUpdatePublisher;
 
-    public AssignmentService(CarRepository carRepo, CarAssignmentRepository assignmentRepo, ParkingSpotService spotService) {
+    public AssignmentService(CarRepository carRepo, CarAssignmentRepository assignmentRepo, ParkingSpotService spotService,
+                              LotUpdatePublisher lotUpdatePublisher) {
         this.carRepo = carRepo;
         this.assignmentRepo = assignmentRepo;
         this.spotService = spotService;
+        this.lotUpdatePublisher = lotUpdatePublisher;
     }
 
     @Transactional
@@ -64,6 +68,7 @@ public class AssignmentService {
         });
 
         CarAssignment saved = assignmentRepo.save(new CarAssignment(car, spot));
+        lotUpdatePublisher.publishSpotUpdated(spot.getLot().getId(), spotService.toDto(spot, Optional.of(saved)));
         return new AssignmentResponse(saved.getId(), car.getId(), spot.getId(), saved.getAssignedAt(),
             spot.getLot().getName(), spot.getLabel());
     }
@@ -73,5 +78,7 @@ public class AssignmentService {
         CarAssignment active = assignmentRepo.findBySpotIdAndRemovedAtIsNull(spotId)
             .orElseThrow(SpotNotOccupiedException::new);
         active.setRemovedAt(Instant.now());
+        ParkingSpot spot = active.getSpot();
+        lotUpdatePublisher.publishSpotUpdated(spot.getLot().getId(), spotService.toDto(spot, Optional.empty()));
     }
 }

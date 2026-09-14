@@ -4,6 +4,7 @@ import com.parkinglot.dto.CreateLotRequest;
 import com.parkinglot.dto.LotResponse;
 import com.parkinglot.dto.SpotResponse;
 import com.parkinglot.dto.UpdateLotRequest;
+import com.parkinglot.dto.GridRequest;
 import com.parkinglot.entity.CarAssignment;
 import com.parkinglot.entity.ParkingLot;
 import com.parkinglot.entity.ParkingSpot;
@@ -13,6 +14,7 @@ import com.parkinglot.exception.NotFoundException;
 import com.parkinglot.repository.CarAssignmentRepository;
 import com.parkinglot.repository.ParkingLotRepository;
 import com.parkinglot.repository.ParkingSpotRepository;
+import com.parkinglot.websocket.LotUpdatePublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,13 +31,16 @@ public class ParkingLotService {
     private final ParkingSpotRepository spotRepo;
     private final CarAssignmentRepository assignmentRepo;
     private final ParkingSpotService spotService;
+    private final LotUpdatePublisher lotUpdatePublisher;
 
     public ParkingLotService(ParkingLotRepository lotRepo, ParkingSpotRepository spotRepo,
-                              CarAssignmentRepository assignmentRepo, ParkingSpotService spotService) {
+                              CarAssignmentRepository assignmentRepo, ParkingSpotService spotService,
+                              LotUpdatePublisher lotUpdatePublisher) {
         this.lotRepo = lotRepo;
         this.spotRepo = spotRepo;
         this.assignmentRepo = assignmentRepo;
         this.spotService = spotService;
+        this.lotUpdatePublisher = lotUpdatePublisher;
     }
 
     @Transactional(readOnly = true)
@@ -69,14 +74,16 @@ public class ParkingLotService {
         }
         ParkingLot lot = new ParkingLot(req.name());
         if (req.grid() != null) {
-            lot.setRowLabels(req.grid().rows());
+            lot.setRowLabels(req.grid().rows().stream().map(GridRequest.RowSpec::label).toList());
         }
         lot = lotRepo.save(lot);
 
         List<SpotResponse> spots = req.grid() != null
-            ? spotService.generateGrid(lot, req.grid().rows(), req.grid().spotsPerRow())
+            ? spotService.generateGrid(lot, req.grid().rows())
             : List.of();
-        return new LotResponse(lot.getId(), lot.getName(), lot.getRowLabels(), spots);
+        LotResponse response = new LotResponse(lot.getId(), lot.getName(), lot.getRowLabels(), spots);
+        lotUpdatePublisher.publishLotCreated(response);
+        return response;
     }
 
     @Transactional
@@ -87,7 +94,9 @@ public class ParkingLotService {
         }
         lot.setName(req.name());
         List<SpotResponse> spots = lot.getSpots().stream().map(spotService::toDto).toList();
-        return new LotResponse(lot.getId(), lot.getName(), lot.getRowLabels(), spots);
+        LotResponse response = new LotResponse(lot.getId(), lot.getName(), lot.getRowLabels(), spots);
+        lotUpdatePublisher.publishLotUpdated(response);
+        return response;
     }
 
     @Transactional
@@ -103,5 +112,6 @@ public class ParkingLotService {
         // parking_spots.lot_id is ON DELETE RESTRICT, so the spots must go first.
         spotRepo.deleteAll(spots);
         lotRepo.delete(lot);
+        lotUpdatePublisher.publishLotDeleted(id);
     }
 }

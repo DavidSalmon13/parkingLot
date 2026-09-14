@@ -58,7 +58,7 @@ public class ParkingLotController {
     @PostMapping("/api/lots/{id}/spots/generate")
     public ResponseEntity<List<SpotResponse>> generateSpots(@PathVariable UUID id, @Valid @RequestBody GridRequest req) {
         ParkingLot lot = lotService.getLotOrThrow(id);
-        List<SpotResponse> created = spotService.generateGrid(lot, req.rows(), req.spotsPerRow());
+        List<SpotResponse> created = spotService.generateGrid(lot, req.rows());
         HttpStatus status = created.isEmpty() ? HttpStatus.OK : HttpStatus.CREATED;
         return ResponseEntity.status(status).body(created);
     }
