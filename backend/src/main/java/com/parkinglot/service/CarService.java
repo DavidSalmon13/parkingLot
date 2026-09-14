@@ -46,7 +46,7 @@ public class CarService {
 
     private CarDetailResponse toDetailResponse(Car car, Optional<CarAssignment> active) {
         CarDetailResponse.CurrentLocation location = active
-            .map(a -> new CarDetailResponse.CurrentLocation(a.getSpot().getLot().getName(), a.getSpot().getLabel()))
+            .map(a -> new CarDetailResponse.CurrentLocation(a.getSpot().getLot().getName(), a.getSpot().getLabel(), a.getAssignedAt()))
             .orElse(null);
         return new CarDetailResponse(car.getId(), car.getOwnerName(), car.getEmployeeId(),
             car.getPhoneNumber(), car.getNotes(), location);
