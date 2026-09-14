@@ -17,6 +17,8 @@ Rule for working through this file: **find the first unchecked `[ ]` phase below
 
 - [x] 0. Project Scaffolding — backend + frontend boot, no features yet
 - [ ] 1. System Architecture — deployment topology, Railway services wired, `/api/lots` reachable end to end
+  - Code done & verified locally (2026-09-14): `WebConfig` (CORS), `SecurityConfig` (permitAll), stub `GET /api/lots` all wired and confirmed end-to-end against a real local Postgres — `curl` returns `200 []`, CORS correctly allows `localhost:5173` and rejects other origins, and `frontend/src/api/client.ts`'s `ApiError` interceptor verified against live success/error responses.
+  - Still outstanding: §1.3 Railway provisioning (`parkinglot-api`/`parkinglot-db`/`parkinglot-frontend`, env var wiring, live URL curl check) — deferred by user decision, not yet attempted. Do this before checking the box.
 - [ ] 2. Data Models — all four entities, repositories, Flyway migrations, constraints verified in psql
 - [ ] 3. API Design — exception scaffolding + all endpoints (lots, spots, cars, assign/remove), each tested with curl
 - [ ] 4. Frontend Architecture — component tree, Zustand store, TanStack Query, visual hierarchy, clarity enhancements, animations (dashboard renders real data)
