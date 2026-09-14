@@ -15,7 +15,7 @@ parkingLot/
 
 Rule for working through this file: **find the first unchecked `[ ]` phase below, implement everything described in its corresponding section further down (all its sub-steps), verify it actually works end to end (run it / curl it / click it — not just "it compiles"), then edit this checklist to `[x]` for that phase before stopping.** Work one phase at a time unless told otherwise.
 
-- [ ] 0. Project Scaffolding — backend + frontend boot, no features yet
+- [x] 0. Project Scaffolding — backend + frontend boot, no features yet
 - [ ] 1. System Architecture — deployment topology, Railway services wired, `/api/lots` reachable end to end
 - [ ] 2. Data Models — all four entities, repositories, Flyway migrations, constraints verified in psql
 - [ ] 3. API Design — exception scaffolding + all endpoints (lots, spots, cars, assign/remove), each tested with curl
