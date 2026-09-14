@@ -16,9 +16,9 @@ parkingLot/
 Rule for working through this file: **find the first unchecked `[ ]` phase below, implement everything described in its corresponding section further down (all its sub-steps), verify it actually works end to end (run it / curl it / click it — not just "it compiles"), then edit this checklist to `[x]` for that phase before stopping.** Work one phase at a time unless told otherwise.
 
 - [x] 0. Project Scaffolding — backend + frontend boot, no features yet
-- [ ] 1. System Architecture — deployment topology, Railway services wired, `/api/lots` reachable end to end
-  - Code done & verified locally (2026-09-14): `WebConfig` (CORS), `SecurityConfig` (permitAll), stub `GET /api/lots` all wired and confirmed end-to-end against a real local Postgres — `curl` returns `200 []`, CORS correctly allows `localhost:5173` and rejects other origins, and `frontend/src/api/client.ts`'s `ApiError` interceptor verified against live success/error responses.
-  - Still outstanding: §1.3 Railway provisioning (`parkinglot-api`/`parkinglot-db`/`parkinglot-frontend`, env var wiring, live URL curl check) — deferred by user decision, not yet attempted. Do this before checking the box.
+- [x] 1. System Architecture — REST/CORS/Security wiring, `/api/lots` reachable end to end
+  - Done & verified locally (2026-09-14): `WebConfig` (CORS), `SecurityConfig` (permitAll), stub `GET /api/lots` all wired and confirmed end-to-end against a real local Postgres — `curl` returns `200 []`, CORS correctly allows `localhost:5173` and rejects other origins, and `frontend/src/api/client.ts`'s `ApiError` interceptor verified against live success/error responses.
+  - §1.3 Railway provisioning was carved out of this phase — see phase 10 at the bottom of this checklist. That's a manual, human-only task (needs an interactive `railway login` and creates billed cloud resources), so it isn't part of what gets automated here.
 - [ ] 2. Data Models — all four entities, repositories, Flyway migrations, constraints verified in psql
 - [ ] 3. API Design — exception scaffolding + all endpoints (lots, spots, cars, assign/remove), each tested with curl
 - [ ] 4. Frontend Architecture — component tree, Zustand store, TanStack Query, visual hierarchy, clarity enhancements, animations (dashboard renders real data)
@@ -27,8 +27,9 @@ Rule for working through this file: **find the first unchecked `[ ]` phase below
 - [ ] 7. Edge Cases — verification pass through every row in the table
 - [ ] 8. Performance Considerations — JOIN FETCH confirmed non-N+1, dev seed load test
 - [ ] 9. Security Considerations — rate limiting, Spring Security scaffold, CORS lockdown, input validation + PII minimization audit
+- [ ] 10. Manual Railway Deployment — **human task, not automated.** See §11 below.
 
-Section 10 (Future Improvements) has no checklist item — it's intentionally not built now.
+Section "Future Improvements" (originally §10 in spec.md) has no checklist item — it's intentionally not built now.
 
 ---
 
@@ -666,3 +667,22 @@ No implementation required now — but leave the codebase in a state that doesn'
 4. **Assignment history reporting**: new read-only endpoint(s) (e.g. `GET /api/cars/{carId}/history`) over the existing `car_assignments` table — no schema change needed, it's already a full history log.
 5. **Server-side search**: promote §3.13's client-side filter to `GET /api/cars/{carId}/location`, reusing `CarService.getCarWithLocation` (§3.10) logic almost verbatim.
 6. **Per-lot WebSocket topics**: change `/topic/lot-updates` to `/topic/lots/{lotId}` in `WebSocketConfig`/`LotUpdatePublisher`, and update `useLotSocket.ts` to subscribe per-visible-lot instead of once globally.
+
+---
+
+## 11. Manual Railway Deployment (Human Task)
+
+**This phase is not automated.** It requires an interactive `railway login` (browser OAuth) and provisions real, billed cloud resources tied to your personal Railway account — an agent should not do this without you present and explicitly driving it. Do this yourself once the backend/frontend are far enough along to be worth deploying (reasonable checkpoint: after §3 API Design is done, so there's a real API to hit — but the steps below work with just the §1 stub too).
+
+**Prerequisites**: a Railway account (https://railway.app), the Railway CLI installed (`npm i -g @railway/cli` or see Railway's docs for your platform), and `railway login` completed in your own terminal.
+
+**Steps** (mirrors spec §1.3):
+1. From `backend/`, run `railway init` → creates the `parkinglot-api` service in a new (or existing) Railway project.
+2. Run `railway add` and select the PostgreSQL plugin → creates `parkinglot-db`. Railway auto-injects `DATABASE_URL`, `DATABASE_USERNAME`, `DATABASE_PASSWORD` into `parkinglot-api`'s environment.
+3. Deploy the backend: `railway up` (Railway auto-detects `backend/Dockerfile` and builds it). Confirm it boots by checking `railway logs` for `Started ParkingLotApplication`.
+4. From `frontend/`, run `railway init` → creates `parkinglot-frontend` as a separate service in the same project (Railway's static-site/Nixpacks builder, or add an Nginx `Dockerfile` serving `dist/` if you prefer a container).
+5. In the Railway dashboard (or `railway variables --set`), set `parkinglot-frontend`'s `VITE_API_BASE_URL` and `VITE_WS_URL` to `parkinglot-api`'s public URL (find it via `railway domain` on the api service, or generate one if it doesn't have one yet) — e.g. `https://parkinglot-api-production.up.railway.app/api` and `wss://parkinglot-api-production.up.railway.app/ws`.
+6. Set `parkinglot-api`'s `CORS_ALLOWED_ORIGIN` env var to `parkinglot-frontend`'s public URL.
+7. Redeploy both services if you changed env vars after the first deploy (`railway up` again, or trigger a redeploy from the dashboard).
+8. **Verify**: `curl https://<api-url>/api/lots` should return `200 []` (or real data, if §2/§3 are done by then). Then open the frontend's public URL in a browser and confirm it loads without CORS errors in the console.
+9. Once this is done, report back (or update this checklist yourself) so the automated work can pick back up knowing live infra exists — e.g. future phases' "verify end to end" steps could optionally also be checked against the live Railway URLs, not just localhost.
