@@ -46,14 +46,14 @@ public class CarService {
         car.setCarType(req.carType());
         car.setClientName(req.clientName());
         car.setDeliveryDate(req.deliveryDate());
-        Optional<CarAssignment> active = assignmentRepo.findByCarIdAndRemovedAtIsNull(carId);
+        Optional<CarAssignment> active = assignmentRepo.findByCar_ChassisNumberAndRemovedAtIsNull(carId);
         return toDetailResponse(car, active);
     }
 
     @Transactional(readOnly = true)
     public CarDetailResponse getCarWithLocation(String carId) {
         Car car = getCarOrThrow(carId);
-        Optional<CarAssignment> active = assignmentRepo.findByCarIdAndRemovedAtIsNull(carId);
+        Optional<CarAssignment> active = assignmentRepo.findByCar_ChassisNumberAndRemovedAtIsNull(carId);
         return toDetailResponse(car, active);
     }
 

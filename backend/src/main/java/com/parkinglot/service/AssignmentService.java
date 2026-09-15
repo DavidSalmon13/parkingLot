@@ -59,7 +59,7 @@ public class AssignmentService {
         assignmentRepo.findBySpotIdAndRemovedAtIsNull(spotId).ifPresent(a -> {
             throw new SpotOccupiedException("Spot " + spot.getLabel() + " already has a car parked in it.", a.getCar().getChassisNumber());
         });
-        assignmentRepo.findByCarIdAndRemovedAtIsNull(req.carId()).ifPresent(a -> {
+        assignmentRepo.findByCar_ChassisNumberAndRemovedAtIsNull(req.carId()).ifPresent(a -> {
             String lotName = a.getSpot().getLot().getName();
             String spotLabel = a.getSpot().getLabel();
             throw new CarAlreadyParkedException(
