@@ -12,6 +12,7 @@ import com.parkinglot.repository.CarRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -55,6 +56,13 @@ public class CarService {
         Car car = getCarOrThrow(carId);
         Optional<CarAssignment> active = assignmentRepo.findByCar_ChassisNumberAndRemovedAtIsNull(carId);
         return toDetailResponse(car, active);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CarDetailResponse> getUnassignedCars() {
+        return carRepo.findAllUnassigned().stream()
+            .map(car -> toDetailResponse(car, Optional.empty()))
+            .toList();
     }
 
     private CarDetailResponse toDetailResponse(Car car, Optional<CarAssignment> active) {

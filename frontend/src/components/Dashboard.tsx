@@ -6,6 +6,7 @@ import { LotCard } from './LotCard';
 import { SearchBar } from './SearchBar';
 import { AddCarModal } from './AddCarModal';
 import { CarDetailPanel } from './CarDetailPanel';
+import { UnassignedCarsPanel } from './UnassignedCarsPanel';
 import type { Spot } from '../types';
 
 export function Dashboard() {
@@ -13,6 +14,7 @@ export function Dashboard() {
   const lots = useDashboardStore((s) => s.lots);
   const wsConnected = useDashboardStore((s) => s.wsConnected);
   const [selected, setSelected] = useState<{ lotName: string; spot: Spot } | null>(null);
+  const [showUnassigned, setShowUnassigned] = useState(false);
 
   const handleSelectSpot = (lotName: string) => (spot: Spot) => {
     setSelected({ lotName, spot });
@@ -28,6 +30,13 @@ export function Dashboard() {
             {wsConnected ? 'Live' : 'Reconnecting…'}
           </span>
           <SearchBar />
+          <button
+            type="button"
+            className="text-sm text-gray-600 underline whitespace-nowrap"
+            onClick={() => setShowUnassigned(true)}
+          >
+            Unassigned cars
+          </button>
           <Link to="/admin" className="text-sm text-gray-600 underline whitespace-nowrap">
             Admin
           </Link>
@@ -49,6 +58,7 @@ export function Dashboard() {
       {selected && selected.spot.status === 'occupied' && (
         <CarDetailPanel lotName={selected.lotName} spot={selected.spot} onClose={() => setSelected(null)} />
       )}
+      {showUnassigned && <UnassignedCarsPanel onClose={() => setShowUnassigned(false)} />}
     </div>
   );
 }

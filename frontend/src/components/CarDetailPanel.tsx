@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCarDetail } from '../api/cars';
 import { useRemoveCar, useUpdateCar } from '../hooks/useMutations';
 import { ApiError } from '../api/client';
+import { CarFieldsInputs } from './CarFieldsInputs';
 import type { Spot } from '../types';
 
 interface CarDetailPanelProps {
@@ -81,42 +82,16 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
 
         {car && editing && (
           <form onSubmit={handleSave} className="mt-4 flex flex-col gap-3">
-            <label className="text-sm">
-              License plate number
-              <input
-                className="mt-1 w-full border rounded px-2 py-1.5"
-                value={licensePlateNumber}
-                onChange={(e) => setLicensePlateNumber(e.target.value)}
-                required
-              />
-            </label>
-            <label className="text-sm">
-              Car type
-              <input
-                className="mt-1 w-full border rounded px-2 py-1.5"
-                value={carType}
-                onChange={(e) => setCarType(e.target.value)}
-                required
-              />
-            </label>
-            <label className="text-sm">
-              Client name
-              <input
-                className="mt-1 w-full border rounded px-2 py-1.5"
-                value={clientName}
-                onChange={(e) => setClientName(e.target.value)}
-                required
-              />
-            </label>
-            <label className="text-sm">
-              Delivery date (optional)
-              <input
-                type="date"
-                className="mt-1 w-full border rounded px-2 py-1.5"
-                value={deliveryDate}
-                onChange={(e) => setDeliveryDate(e.target.value)}
-              />
-            </label>
+            <CarFieldsInputs
+              licensePlateNumber={licensePlateNumber}
+              carType={carType}
+              clientName={clientName}
+              deliveryDate={deliveryDate}
+              onLicensePlateNumberChange={setLicensePlateNumber}
+              onCarTypeChange={setCarType}
+              onClientNameChange={setClientName}
+              onDeliveryDateChange={setDeliveryDate}
+            />
 
             {updateErrorMessage && <p className="text-sm text-red-600">{updateErrorMessage}</p>}
 

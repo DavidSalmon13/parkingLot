@@ -6,6 +6,7 @@ import { createLot, deleteLot, generateSpots, renameLot } from '../api/lots';
 import { updateCar } from '../api/cars';
 import type {
   AssignCarPayload,
+  CarDetail,
   CreateLotPayload,
   CreateSpotPayload,
   GridPayload,
@@ -46,6 +47,9 @@ export function useUpdateCar() {
     mutationFn: ({ carId, payload }: { carId: string; payload: UpdateCarPayload }) => updateCar(carId, payload),
     onSuccess: (updated) => {
       queryClient.setQueryData(['car', updated.chassisNumber], updated);
+      queryClient.setQueryData<CarDetail[]>(['cars', 'unassigned'], (old) =>
+        old?.map((car) => (car.chassisNumber === updated.chassisNumber ? updated : car)),
+      );
     },
   });
 }

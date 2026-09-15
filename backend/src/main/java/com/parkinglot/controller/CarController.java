@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public class CarController {
 
@@ -26,6 +28,13 @@ public class CarController {
     @PostMapping("/api/cars")
     public ResponseEntity<CarDetailResponse> createCar(@Valid @RequestBody CreateCarRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(req));
+    }
+
+    // Registered ahead of GET /api/cars/{carId} in effect — Spring prefers the
+    // more specific literal mapping over the path-variable one for this segment.
+    @GetMapping("/api/cars/unassigned")
+    public List<CarDetailResponse> getUnassignedCars() {
+        return carService.getUnassignedCars();
     }
 
     @GetMapping("/api/cars/{carId}")
