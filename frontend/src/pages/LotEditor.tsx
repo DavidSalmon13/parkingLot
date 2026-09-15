@@ -282,7 +282,7 @@ export function LotEditor() {
                       <span className={spot.status === 'occupied' ? 'text-red-600' : 'text-green-600'}>
                         {spot.status}
                       </span>
-                      {spot.car && <span className="text-gray-500"> ({spot.car.id})</span>}
+                      {spot.car && <span className="text-gray-500"> ({spot.car.chassisNumber})</span>}
                     </td>
                     <td className="py-1">
                       <div className="flex gap-2 items-center">

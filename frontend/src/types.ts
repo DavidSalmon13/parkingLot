@@ -1,6 +1,7 @@
 export interface CarSummary {
-  id: string;
-  ownerName: string;
+  chassisNumber: string;
+  licensePlateNumber: string;
+  carType: string;
 }
 
 export interface Spot {
@@ -20,11 +21,11 @@ export interface Lot {
 }
 
 export interface CarDetail {
-  id: string;
-  ownerName: string;
-  employeeId: string;
-  phoneNumber: string | null;
-  notes: string | null;
+  chassisNumber: string;
+  licensePlateNumber: string;
+  carType: string;
+  clientName: string;
+  deliveryDate: string | null;
   currentLocation: { lotName: string; spotLabel: string; assignedAt: string } | null;
 }
 
@@ -38,15 +39,22 @@ export interface AssignmentResult {
 }
 
 export interface NewCarDetails {
-  ownerName: string;
-  employeeId: string;
-  phoneNumber?: string;
-  notes?: string;
+  licensePlateNumber: string;
+  carType: string;
+  clientName: string;
+  deliveryDate?: string;
 }
 
 export interface AssignCarPayload {
   carId: string;
   newCar?: NewCarDetails;
+}
+
+export interface UpdateCarPayload {
+  licensePlateNumber: string;
+  carType: string;
+  clientName: string;
+  deliveryDate?: string;
 }
 
 // Mirrors the WebSocket message envelope from spec §6.3.

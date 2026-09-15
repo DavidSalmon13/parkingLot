@@ -8,27 +8,28 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "cars")
 public class Car {
 
-    // User-supplied, exactly 6 characters — no @GeneratedValue.
+    // User-supplied identifier — no @GeneratedValue.
     @Id
-    @Column(length = 6)
-    private String id;
+    @Column(name = "chassis_number", length = 50)
+    private String chassisNumber;
 
-    @Column(name = "owner_name", nullable = false, length = 100)
-    private String ownerName;
+    @Column(name = "license_plate_number", nullable = false, length = 20)
+    private String licensePlateNumber;
 
-    @Column(name = "employee_id", nullable = false, length = 50)
-    private String employeeId;
+    @Column(name = "car_type", nullable = false, length = 50)
+    private String carType;
 
-    @Column(name = "phone_number", length = 30)
-    private String phoneNumber;
+    @Column(name = "client_name", nullable = false, length = 100)
+    private String clientName;
 
-    @Column(length = 500)
-    private String notes;
+    @Column(name = "delivery_date")
+    private LocalDate deliveryDate;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -41,48 +42,48 @@ public class Car {
     protected Car() {
     }
 
-    public Car(String id, String ownerName, String employeeId, String phoneNumber, String notes) {
-        this.id = id;
-        this.ownerName = ownerName;
-        this.employeeId = employeeId;
-        this.phoneNumber = phoneNumber;
-        this.notes = notes;
+    public Car(String chassisNumber, String licensePlateNumber, String carType, String clientName, LocalDate deliveryDate) {
+        this.chassisNumber = chassisNumber;
+        this.licensePlateNumber = licensePlateNumber;
+        this.carType = carType;
+        this.clientName = clientName;
+        this.deliveryDate = deliveryDate;
     }
 
-    public String getId() {
-        return id;
+    public String getChassisNumber() {
+        return chassisNumber;
     }
 
-    public String getOwnerName() {
-        return ownerName;
+    public String getLicensePlateNumber() {
+        return licensePlateNumber;
     }
 
-    public void setOwnerName(String ownerName) {
-        this.ownerName = ownerName;
+    public void setLicensePlateNumber(String licensePlateNumber) {
+        this.licensePlateNumber = licensePlateNumber;
     }
 
-    public String getEmployeeId() {
-        return employeeId;
+    public String getCarType() {
+        return carType;
     }
 
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
+    public void setCarType(String carType) {
+        this.carType = carType;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getClientName() {
+        return clientName;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 
-    public String getNotes() {
-        return notes;
+    public LocalDate getDeliveryDate() {
+        return deliveryDate;
     }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setDeliveryDate(LocalDate deliveryDate) {
+        this.deliveryDate = deliveryDate;
     }
 
     public Instant getCreatedAt() {

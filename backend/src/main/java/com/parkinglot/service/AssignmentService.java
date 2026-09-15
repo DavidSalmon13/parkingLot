@@ -46,8 +46,8 @@ public class AssignmentService {
             if (existing.isPresent()) {
                 throw new CarIdExistsException(req.carId());
             }
-            car = carRepo.save(new Car(req.carId(), req.newCar().ownerName(), req.newCar().employeeId(),
-                req.newCar().phoneNumber(), req.newCar().notes()));
+            car = carRepo.save(new Car(req.carId(), req.newCar().licensePlateNumber(), req.newCar().carType(),
+                req.newCar().clientName(), req.newCar().deliveryDate()));
         } else {
             car = existing.orElseThrow(() -> new CarNotFoundException(req.carId()));
         }
@@ -57,7 +57,7 @@ public class AssignmentService {
         // are the real guarantee against a concurrent double-booking slipping through
         // (backstopped by GlobalExceptionHandler's DataIntegrityViolationException handling).
         assignmentRepo.findBySpotIdAndRemovedAtIsNull(spotId).ifPresent(a -> {
-            throw new SpotOccupiedException("Spot " + spot.getLabel() + " already has a car parked in it.", a.getCar().getId());
+            throw new SpotOccupiedException("Spot " + spot.getLabel() + " already has a car parked in it.", a.getCar().getChassisNumber());
         });
         assignmentRepo.findByCarIdAndRemovedAtIsNull(req.carId()).ifPresent(a -> {
             String lotName = a.getSpot().getLot().getName();
@@ -69,7 +69,7 @@ public class AssignmentService {
 
         CarAssignment saved = assignmentRepo.save(new CarAssignment(car, spot));
         lotUpdatePublisher.publishSpotUpdated(spot.getLot().getId(), spotService.toDto(spot, Optional.of(saved)));
-        return new AssignmentResponse(saved.getId(), car.getId(), spot.getId(), saved.getAssignedAt(),
+        return new AssignmentResponse(saved.getId(), car.getChassisNumber(), spot.getId(), saved.getAssignedAt(),
             spot.getLot().getName(), spot.getLabel());
     }
 

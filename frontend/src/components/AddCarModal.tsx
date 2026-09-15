@@ -11,8 +11,8 @@ interface AddCarModalProps {
 type Tab = 'existing' | 'new';
 
 const ERROR_COPY: Record<string, string> = {
-  CAR_NOT_FOUND: "No car with that ID — switch to 'New car' to register it.",
-  CAR_ID_EXISTS: "This ID is already registered — switch to 'Existing car'.",
+  CAR_NOT_FOUND: "No car with that chassis number — switch to 'New car' to register it.",
+  CAR_ID_EXISTS: 'This chassis number is already registered — switch to \'Existing car\'.',
   SPOT_OCCUPIED: 'This spot was just taken by someone else.',
   SPOT_NOT_FOUND: 'This spot no longer exists — it was removed by someone else. Refreshing...',
 };
@@ -20,10 +20,10 @@ const ERROR_COPY: Record<string, string> = {
 export function AddCarModal({ spot, onClose }: AddCarModalProps) {
   const [tab, setTab] = useState<Tab>('existing');
   const [carId, setCarId] = useState('');
-  const [ownerName, setOwnerName] = useState('');
-  const [employeeId, setEmployeeId] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [notes, setNotes] = useState('');
+  const [licensePlateNumber, setLicensePlateNumber] = useState('');
+  const [carType, setCarType] = useState('');
+  const [clientName, setClientName] = useState('');
+  const [deliveryDate, setDeliveryDate] = useState('');
 
   const assignCar = useAssignCar();
 
@@ -35,7 +35,10 @@ export function AddCarModal({ spot, onClose }: AddCarModalProps) {
         payload:
           tab === 'existing'
             ? { carId }
-            : { carId, newCar: { ownerName, employeeId, phoneNumber: phoneNumber || undefined, notes: notes || undefined } },
+            : {
+                carId,
+                newCar: { licensePlateNumber, carType, clientName, deliveryDate: deliveryDate || undefined },
+              },
       },
       { onSuccess: onClose },
     );
@@ -69,12 +72,12 @@ export function AddCarModal({ spot, onClose }: AddCarModalProps) {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <label className="text-sm">
-            Car ID (6 characters)
+            Chassis number
             <input
               className="mt-1 w-full border rounded px-2 py-1.5"
               value={carId}
               onChange={(e) => setCarId(e.target.value)}
-              maxLength={6}
+              maxLength={50}
               required
             />
           </label>
@@ -82,37 +85,39 @@ export function AddCarModal({ spot, onClose }: AddCarModalProps) {
           {tab === 'new' && (
             <>
               <label className="text-sm">
-                Owner name
+                License plate number
                 <input
                   className="mt-1 w-full border rounded px-2 py-1.5"
-                  value={ownerName}
-                  onChange={(e) => setOwnerName(e.target.value)}
+                  value={licensePlateNumber}
+                  onChange={(e) => setLicensePlateNumber(e.target.value)}
                   required
                 />
               </label>
               <label className="text-sm">
-                Employee ID
+                Car type
                 <input
                   className="mt-1 w-full border rounded px-2 py-1.5"
-                  value={employeeId}
-                  onChange={(e) => setEmployeeId(e.target.value)}
+                  value={carType}
+                  onChange={(e) => setCarType(e.target.value)}
                   required
                 />
               </label>
               <label className="text-sm">
-                Phone (optional)
+                Client name
                 <input
                   className="mt-1 w-full border rounded px-2 py-1.5"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  required
                 />
               </label>
               <label className="text-sm">
-                Notes (optional)
+                Delivery date (optional)
                 <input
+                  type="date"
                   className="mt-1 w-full border rounded px-2 py-1.5"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
+                  value={deliveryDate}
+                  onChange={(e) => setDeliveryDate(e.target.value)}
                 />
               </label>
             </>

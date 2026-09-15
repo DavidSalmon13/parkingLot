@@ -1,13 +1,14 @@
 package com.parkinglot.dto;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 public record CarDetailResponse(
-    String id,
-    String ownerName,
-    String employeeId,
-    String phoneNumber,
-    String notes,
+    String chassisNumber,
+    String licensePlateNumber,
+    String carType,
+    String clientName,
+    LocalDate deliveryDate,
     CurrentLocation currentLocation
 ) {
     // assignedAt isn't in spec §3.10's literal response shape, but §5.6's

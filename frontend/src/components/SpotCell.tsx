@@ -36,7 +36,7 @@ export function SpotCell({ spot, lotName, onSelect }: SpotCellProps) {
       {hovered && <SpotTooltip lotName={lotName} spotLabel={spot.label} />}
       <span className="font-semibold text-xs sm:text-sm truncate max-w-full">{spot.label}</span>
       {spot.status === 'occupied' && spot.car && (
-        <span className="text-[10px] sm:text-sm text-gray-700 truncate max-w-full">{spot.car.id}</span>
+        <span className="text-[10px] sm:text-sm text-gray-700 truncate max-w-full">{spot.car.chassisNumber}</span>
       )}
     </div>
   );

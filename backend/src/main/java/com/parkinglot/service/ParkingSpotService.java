@@ -45,7 +45,7 @@ public class ParkingSpotService {
     public SpotResponse toDto(ParkingSpot spot, Optional<CarAssignment> activeAssignment) {
         return activeAssignment
             .map(a -> new SpotResponse(spot.getId(), spot.getLabel(), spot.getRow(), spot.getPosition(),
-                "occupied", new CarSummaryResponse(a.getCar().getId(), a.getCar().getOwnerName())))
+                "occupied", new CarSummaryResponse(a.getCar().getChassisNumber(), a.getCar().getLicensePlateNumber(), a.getCar().getCarType())))
             .orElseGet(() -> new SpotResponse(spot.getId(), spot.getLabel(), spot.getRow(), spot.getPosition(),
                 "available", null));
     }
@@ -101,7 +101,7 @@ public class ParkingSpotService {
     public void deleteSpot(UUID id) {
         ParkingSpot spot = getSpotOrThrow(id);
         assignmentRepo.findBySpotIdAndRemovedAtIsNull(id).ifPresent(a -> {
-            throw new SpotOccupiedException("Remove the car from this spot before deleting it.", a.getCar().getId());
+            throw new SpotOccupiedException("Remove the car from this spot before deleting it.", a.getCar().getChassisNumber());
         });
         UUID lotId = spot.getLot().getId();
         spotRepo.delete(spot);

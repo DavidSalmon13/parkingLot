@@ -14,6 +14,7 @@ DECLARE
   new_spot_id uuid;
   spot_counter int := 0;
   new_car_id text;
+  car_types CONSTANT text[] := ARRAY['Sedan', 'SUV', 'Truck', 'Van', 'Coupe'];
 BEGIN
   FOREACH lot_name IN ARRAY lot_names LOOP
     INSERT INTO parking_lots (id, name, row_labels)
@@ -30,8 +31,10 @@ BEGIN
         -- Occupy roughly every third spot with a distinct car for a realistic mixed dashboard.
         IF spot_counter % 3 = 0 THEN
           new_car_id := 'DEV' || lpad(spot_counter::text, 3, '0');
-          INSERT INTO cars (id, owner_name, employee_id, phone_number, notes)
-          VALUES (new_car_id, 'Seed Owner ' || spot_counter, 'E' || lpad(spot_counter::text, 4, '0'), NULL, NULL);
+          INSERT INTO cars (chassis_number, license_plate_number, car_type, client_name, delivery_date)
+          VALUES (new_car_id, 'PLT' || lpad(spot_counter::text, 4, '0'),
+            car_types[1 + (spot_counter % array_length(car_types, 1))],
+            'Seed Client ' || spot_counter, CURRENT_DATE + (spot_counter || ' days')::interval);
           INSERT INTO car_assignments (id, car_id, spot_id)
           VALUES (gen_random_uuid(), new_car_id, new_spot_id);
         END IF;

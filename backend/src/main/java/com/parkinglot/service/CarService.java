@@ -2,6 +2,7 @@ package com.parkinglot.service;
 
 import com.parkinglot.dto.CarDetailResponse;
 import com.parkinglot.dto.CreateCarRequest;
+import com.parkinglot.dto.UpdateCarRequest;
 import com.parkinglot.entity.Car;
 import com.parkinglot.entity.CarAssignment;
 import com.parkinglot.exception.CarIdExistsException;
@@ -30,11 +31,23 @@ public class CarService {
 
     @Transactional
     public CarDetailResponse createCar(CreateCarRequest req) {
-        if (carRepo.existsById(req.id())) {
-            throw new CarIdExistsException(req.id());
+        if (carRepo.existsById(req.chassisNumber())) {
+            throw new CarIdExistsException(req.chassisNumber());
         }
-        Car saved = carRepo.save(new Car(req.id(), req.ownerName(), req.employeeId(), req.phoneNumber(), req.notes()));
+        Car saved = carRepo.save(new Car(req.chassisNumber(), req.licensePlateNumber(), req.carType(),
+            req.clientName(), req.deliveryDate()));
         return toDetailResponse(saved, Optional.empty());
+    }
+
+    @Transactional
+    public CarDetailResponse updateCar(String carId, UpdateCarRequest req) {
+        Car car = getCarOrThrow(carId);
+        car.setLicensePlateNumber(req.licensePlateNumber());
+        car.setCarType(req.carType());
+        car.setClientName(req.clientName());
+        car.setDeliveryDate(req.deliveryDate());
+        Optional<CarAssignment> active = assignmentRepo.findByCarIdAndRemovedAtIsNull(carId);
+        return toDetailResponse(car, active);
     }
 
     @Transactional(readOnly = true)
@@ -48,7 +61,7 @@ public class CarService {
         CarDetailResponse.CurrentLocation location = active
             .map(a -> new CarDetailResponse.CurrentLocation(a.getSpot().getLot().getName(), a.getSpot().getLabel(), a.getAssignedAt()))
             .orElse(null);
-        return new CarDetailResponse(car.getId(), car.getOwnerName(), car.getEmployeeId(),
-            car.getPhoneNumber(), car.getNotes(), location);
+        return new CarDetailResponse(car.getChassisNumber(), car.getLicensePlateNumber(), car.getCarType(),
+            car.getClientName(), car.getDeliveryDate(), location);
     }
 }
