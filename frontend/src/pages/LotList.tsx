@@ -8,7 +8,7 @@ import { useDashboardStore } from '../store/useDashboardStore';
 import type { GridPayload } from '../types';
 
 const CREATE_ERROR_COPY: Record<string, string> = {
-  LOT_NAME_TAKEN: 'A lot with that name already exists.',
+  LOT_NAME_TAKEN: 'כבר קיים חניון בשם הזה.',
 };
 
 export function LotList() {
@@ -69,8 +69,8 @@ export function LotList() {
   return (
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
-        <h2 className="text-xl font-semibold text-zinc-100">Lots</h2>
-        {isLoading && <p className="text-zinc-400">Loading lots...</p>}
+        <h2 className="text-xl font-semibold text-zinc-100">חניונים</h2>
+        {isLoading && <p className="text-zinc-400">טוען חניונים...</p>}
         <div className="flex flex-col gap-2">
           {lots.map((lot) => {
             const occupied = lot.spots.filter((s) => s.status === 'occupied').length;
@@ -78,7 +78,7 @@ export function LotList() {
             const deleteErrorMessage =
               deleteError instanceof ApiError
                 ? deleteError.error === 'LOT_HAS_OCCUPIED_SPOTS'
-                  ? `Occupied spots block deletion: ${(deleteError.details?.occupiedSpotLabels as string[] | undefined)?.join(', ')}`
+                  ? `מקומות תפוסים חוסמים את המחיקה: ${(deleteError.details?.occupiedSpotLabels as string[] | undefined)?.join(', ')}`
                   : deleteError.message
                 : null;
 
@@ -103,7 +103,7 @@ export function LotList() {
                     </Link>
                   )}
                   <span className="text-sm text-zinc-400 whitespace-nowrap">
-                    {occupied}/{lot.spots.length} occupied
+                    {occupied}/{lot.spots.length} תפוסים
                   </span>
                   <div className="flex gap-2">
                     <button
@@ -111,7 +111,7 @@ export function LotList() {
                       className="btn-secondary text-xs px-2 py-1"
                       onClick={() => startRename(lot.id, lot.name)}
                     >
-                      Rename
+                      שינוי שם
                     </button>
                     {confirmingDeleteId === lot.id ? (
                       <>
@@ -120,7 +120,7 @@ export function LotList() {
                           className="btn-secondary text-xs px-2 py-1"
                           onClick={() => setConfirmingDeleteId(null)}
                         >
-                          Cancel
+                          ביטול
                         </button>
                         <button
                           type="button"
@@ -128,7 +128,7 @@ export function LotList() {
                           disabled={deleteLot.isPending}
                           onClick={() => deleteLot.mutate(lot.id, { onSuccess: () => setConfirmingDeleteId(null) })}
                         >
-                          Confirm delete
+                          אישור מחיקה
                         </button>
                       </>
                     ) : (
@@ -140,7 +140,7 @@ export function LotList() {
                           deleteLot.reset();
                         }}
                       >
-                        Delete
+                        מחיקה
                       </button>
                     )}
                   </div>
@@ -152,15 +152,15 @@ export function LotList() {
               </div>
             );
           })}
-          {!isLoading && lots.length === 0 && <p className="text-sm text-zinc-500">No lots yet.</p>}
+          {!isLoading && lots.length === 0 && <p className="text-sm text-zinc-500">אין עדיין חניונים.</p>}
         </div>
       </section>
 
       <section className="flex flex-col gap-3 max-w-sm">
-        <h2 className="text-xl font-semibold text-zinc-100">New Lot</h2>
+        <h2 className="text-xl font-semibold text-zinc-100">חניון חדש</h2>
         <form onSubmit={handleCreate} className="flex flex-col gap-3">
           <label className="text-sm text-zinc-300">
-            Lot name
+            שם החניון
             <input
               className="input-field mt-1"
               value={newName}
@@ -168,11 +168,11 @@ export function LotList() {
               required
             />
           </label>
-          <p className="text-xs text-zinc-500">Optionally generate a spot grid now — you can also add spots later.</p>
+          <p className="text-xs text-zinc-500">אפשר ליצור רשת מקומות חניה עכשיו — אפשר גם להוסיף מקומות מאוחר יותר.</p>
           <GridInput onChange={setNewGrid} />
           {createErrorMessage && <p className="text-sm text-rose-400">{createErrorMessage}</p>}
           <button type="submit" className="btn-primary self-start" disabled={createLot.isPending}>
-            Create lot
+            יצירת חניון
           </button>
         </form>
       </section>

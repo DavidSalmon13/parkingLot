@@ -57,13 +57,13 @@ public class AssignmentService {
         // are the real guarantee against a concurrent double-booking slipping through
         // (backstopped by GlobalExceptionHandler's DataIntegrityViolationException handling).
         assignmentRepo.findBySpotIdAndRemovedAtIsNull(spotId).ifPresent(a -> {
-            throw new SpotOccupiedException("Spot " + spot.getLabel() + " already has a car parked in it.", a.getCar().getChassisNumber());
+            throw new SpotOccupiedException("המקום " + spot.getLabel() + " כבר תפוס על ידי רכב אחר.", a.getCar().getChassisNumber());
         });
         assignmentRepo.findByCar_ChassisNumberAndRemovedAtIsNull(req.carId()).ifPresent(a -> {
             String lotName = a.getSpot().getLot().getName();
             String spotLabel = a.getSpot().getLabel();
             throw new CarAlreadyParkedException(
-                "Car " + req.carId() + " is already parked in " + lotName + ", Spot " + spotLabel + ". Remove it from there first.",
+                "הרכב " + req.carId() + " כבר חונה בחניון " + lotName + ", מקום " + spotLabel + ". יש להסיר אותו משם קודם.",
                 lotName, spotLabel);
         });
 

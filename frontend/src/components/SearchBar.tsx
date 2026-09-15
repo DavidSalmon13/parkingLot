@@ -24,7 +24,7 @@ export function SearchBar() {
     <form onSubmit={handleSubmit} className="flex items-center gap-2">
       <input
         className="input-field w-48 sm:w-56"
-        placeholder="Find car by chassis number..."
+        placeholder="חיפוש רכב לפי מספר שלדה..."
         value={term}
         onChange={(e) => {
           setTerm(e.target.value);
@@ -33,9 +33,9 @@ export function SearchBar() {
         maxLength={50}
       />
       <button type="submit" className="btn-primary">
-        Find
+        חיפוש
       </button>
-      {notFound && <span className="text-sm text-rose-400">No car found with that chassis number.</span>}
+      {notFound && <span className="text-sm text-rose-400">לא נמצא רכב עם מספר שלדה זה.</span>}
     </form>
   );
 }

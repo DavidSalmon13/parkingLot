@@ -7,6 +7,6 @@ import java.util.Map;
 public class SpotNotOccupiedException extends ApiException {
 
     public SpotNotOccupiedException() {
-        super("SPOT_NOT_OCCUPIED", HttpStatus.CONFLICT, "This spot has no car parked in it.", Map.of());
+        super("SPOT_NOT_OCCUPIED", HttpStatus.CONFLICT, "אין רכב החונה במקום הזה.", Map.of());
     }
 }

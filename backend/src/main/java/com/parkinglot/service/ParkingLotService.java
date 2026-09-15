@@ -64,7 +64,7 @@ public class ParkingLotService {
     }
 
     public ParkingLot getLotOrThrow(UUID id) {
-        return lotRepo.findById(id).orElseThrow(() -> new NotFoundException("LOT_NOT_FOUND", "No lot found with ID " + id + "."));
+        return lotRepo.findById(id).orElseThrow(() -> new NotFoundException("LOT_NOT_FOUND", "לא נמצא חניון עם המספר " + id + "."));
     }
 
     @Transactional
