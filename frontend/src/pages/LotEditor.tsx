@@ -8,16 +8,11 @@ import { useDashboardStore } from '../store/useDashboardStore';
 import type { GridPayload, Spot } from '../types';
 
 const LOT_ERROR_COPY: Record<string, string> = {
-  LOT_NAME_TAKEN: 'כבר קיים חניון בשם הזה.',
+  LOT_NAME_TAKEN: 'A lot with that name already exists.',
 };
 
 const SPOT_ERROR_COPY: Record<string, string> = {
-  SPOT_LABEL_TAKEN: 'התווית הזו כבר בשימוש בחניון הזה.',
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  occupied: 'תפוס',
-  available: 'פנוי',
+  SPOT_LABEL_TAKEN: 'That label is already used in this lot.',
 };
 
 export function LotEditor() {
@@ -46,14 +41,14 @@ export function LotEditor() {
   const [confirmingDeleteSpotId, setConfirmingDeleteSpotId] = useState<string | null>(null);
   const deleteSpot = useDeleteSpot();
 
-  if (isLoading && !lot) return <p className="text-zinc-400">טוען חניון...</p>;
+  if (isLoading && !lot) return <p className="text-zinc-400">Loading lot...</p>;
 
   if (!lot) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="text-rose-400">החניון לא נמצא.</p>
+        <p className="text-rose-400">Lot not found.</p>
         <Link to="/admin" className="text-sm text-zinc-300 underline">
-          חזרה לחניונים
+          ← Back to lots
         </Link>
       </div>
     );
@@ -112,7 +107,7 @@ export function LotEditor() {
   const deleteErrorMessage =
     deleteError instanceof ApiError
       ? deleteError.error === 'SPOT_OCCUPIED'
-        ? `המקום תפוס על ידי ${deleteError.details?.carId} — יש להסיר את הרכב קודם.`
+        ? `Spot occupied by ${deleteError.details?.carId} — remove the car first.`
         : deleteError.message
       : null;
 
@@ -122,7 +117,7 @@ export function LotEditor() {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
         <Link to="/admin" className="link-muted self-start">
-          חזרה לחניונים
+          ← Back to lots
         </Link>
         {renaming ? (
           <input
@@ -152,7 +147,7 @@ export function LotEditor() {
               setRenaming(true);
               setRenameValue(lot.name);
             }}
-            title="לחצו לשינוי שם"
+            title="Click to rename"
           >
             {lot.name}
           </h2>
@@ -161,21 +156,21 @@ export function LotEditor() {
       </div>
 
       <section className="flex flex-col gap-3 max-w-sm">
-        <h3 className="text-lg font-semibold text-zinc-100">יצירת מקומות חניה</h3>
+        <h3 className="text-lg font-semibold text-zinc-100">Generate spots</h3>
         <form onSubmit={handleGenerate} className="flex flex-col gap-3">
           <GridInput onChange={setGrid} existingRowLabels={[...new Set(lot.spots.map((s) => s.row))].sort()} />
           {generateErrorMessage && <p className="text-sm text-rose-400">{generateErrorMessage}</p>}
           <button type="submit" className="btn-primary self-start" disabled={!grid || generateSpots.isPending}>
-            יצירה
+            Generate
           </button>
         </form>
       </section>
 
       <section className="flex flex-col gap-3 max-w-md">
-        <h3 className="text-lg font-semibold text-zinc-100">הוספת מקום מותאם אישית</h3>
+        <h3 className="text-lg font-semibold text-zinc-100">Add custom spot</h3>
         <form onSubmit={handleAddSpot} className="flex gap-2 items-end flex-wrap">
           <label className="text-sm text-zinc-300">
-            תווית
+            Label
             <input
               className="input-field mt-1 w-24"
               value={newLabel}
@@ -184,7 +179,7 @@ export function LotEditor() {
             />
           </label>
           <label className="text-sm text-zinc-300">
-            שורה
+            Row
             <input
               className="input-field mt-1 w-20"
               value={newRow}
@@ -193,7 +188,7 @@ export function LotEditor() {
             />
           </label>
           <label className="text-sm text-zinc-300">
-            מיקום
+            Position
             <input
               type="number"
               className="input-field mt-1 w-20"
@@ -203,22 +198,22 @@ export function LotEditor() {
             />
           </label>
           <button type="submit" className="btn-primary" disabled={addSpot.isPending}>
-            הוספת מקום
+            Add spot
           </button>
         </form>
         {addSpotErrorMessage && <p className="text-sm text-rose-400">{addSpotErrorMessage}</p>}
       </section>
 
       <section className="flex flex-col gap-3">
-        <h3 className="text-lg font-semibold text-zinc-100">מקומות חניה</h3>
+        <h3 className="text-lg font-semibold text-zinc-100">Spots</h3>
         <table className="text-sm border-collapse">
           <thead>
-            <tr className="text-start text-zinc-500">
-              <th className="pe-4 pb-2">תווית</th>
-              <th className="pe-4 pb-2">שורה</th>
-              <th className="pe-4 pb-2">מיקום</th>
-              <th className="pe-4 pb-2">סטטוס</th>
-              <th className="pb-2">פעולות</th>
+            <tr className="text-left text-zinc-500">
+              <th className="pr-4 pb-2">Label</th>
+              <th className="pr-4 pb-2">Row</th>
+              <th className="pr-4 pb-2">Position</th>
+              <th className="pr-4 pb-2">Status</th>
+              <th className="pb-2">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -226,21 +221,21 @@ export function LotEditor() {
               <tr key={spot.id} className="border-t border-zinc-800 align-top text-zinc-200">
                 {editingSpotId === spot.id ? (
                   <>
-                    <td className="pe-4 py-1">
+                    <td className="pr-4 py-1">
                       <input
                         className="input-field py-0.5 w-20"
                         value={editLabel}
                         onChange={(e) => setEditLabel(e.target.value)}
                       />
                     </td>
-                    <td className="pe-4 py-1">
+                    <td className="pr-4 py-1">
                       <input
                         className="input-field py-0.5 w-16"
                         value={editRow}
                         onChange={(e) => setEditRow(e.target.value)}
                       />
                     </td>
-                    <td className="pe-4 py-1">
+                    <td className="pr-4 py-1">
                       <input
                         type="number"
                         className="input-field py-0.5 w-16"
@@ -248,7 +243,7 @@ export function LotEditor() {
                         onChange={(e) => setEditPosition(e.target.value)}
                       />
                     </td>
-                    <td className="pe-4 py-1 text-zinc-500">{STATUS_LABELS[spot.status]}</td>
+                    <td className="pr-4 py-1 text-zinc-500">{spot.status}</td>
                     <td className="py-1">
                       <div className="flex gap-2">
                         <button
@@ -256,7 +251,7 @@ export function LotEditor() {
                           className="btn-secondary text-xs px-2 py-1"
                           onClick={() => setEditingSpotId(null)}
                         >
-                          ביטול
+                          Cancel
                         </button>
                         <button
                           type="button"
@@ -264,7 +259,7 @@ export function LotEditor() {
                           disabled={updateSpot.isPending}
                           onClick={() => commitEdit(spot.id)}
                         >
-                          שמירה
+                          Save
                         </button>
                       </div>
                       {editErrorMessage && <p className="text-xs text-rose-400 mt-1">{editErrorMessage}</p>}
@@ -272,12 +267,12 @@ export function LotEditor() {
                   </>
                 ) : (
                   <>
-                    <td className="pe-4 py-1 font-medium">{spot.label}</td>
-                    <td className="pe-4 py-1">{spot.row}</td>
-                    <td className="pe-4 py-1">{spot.position}</td>
-                    <td className="pe-4 py-1">
+                    <td className="pr-4 py-1 font-medium">{spot.label}</td>
+                    <td className="pr-4 py-1">{spot.row}</td>
+                    <td className="pr-4 py-1">{spot.position}</td>
+                    <td className="pr-4 py-1">
                       <span className={spot.status === 'occupied' ? 'text-rose-400' : 'text-emerald-400'}>
-                        {STATUS_LABELS[spot.status]}
+                        {spot.status}
                       </span>
                       {spot.car && <span className="text-zinc-500"> ({spot.car.chassisNumber})</span>}
                     </td>
@@ -288,7 +283,7 @@ export function LotEditor() {
                           className="btn-secondary text-xs px-2 py-1"
                           onClick={() => startEdit(spot)}
                         >
-                          עריכה
+                          Edit
                         </button>
                         {confirmingDeleteSpotId === spot.id ? (
                           <>
@@ -297,7 +292,7 @@ export function LotEditor() {
                               className="btn-secondary text-xs px-2 py-1"
                               onClick={() => setConfirmingDeleteSpotId(null)}
                             >
-                              ביטול
+                              Cancel
                             </button>
                             <button
                               type="button"
@@ -307,7 +302,7 @@ export function LotEditor() {
                                 deleteSpot.mutate(spot.id, { onSuccess: () => setConfirmingDeleteSpotId(null) })
                               }
                             >
-                              אישור
+                              Confirm
                             </button>
                           </>
                         ) : (
@@ -319,7 +314,7 @@ export function LotEditor() {
                               deleteSpot.reset();
                             }}
                           >
-                            מחיקה
+                            Delete
                           </button>
                         )}
                       </div>
@@ -333,7 +328,7 @@ export function LotEditor() {
             ))}
           </tbody>
         </table>
-        {sortedSpots.length === 0 && <p className="text-sm text-zinc-500">אין עדיין מקומות חניה.</p>}
+        {sortedSpots.length === 0 && <p className="text-sm text-zinc-500">No spots yet.</p>}
       </section>
     </div>
   );

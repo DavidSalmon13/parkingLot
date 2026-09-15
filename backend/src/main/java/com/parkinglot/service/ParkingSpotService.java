@@ -51,7 +51,7 @@ public class ParkingSpotService {
     }
 
     public ParkingSpot getSpotOrThrow(UUID id) {
-        return spotRepo.findById(id).orElseThrow(() -> new NotFoundException("SPOT_NOT_FOUND", "לא נמצא מקום חניה עם המספר " + id + "."));
+        return spotRepo.findById(id).orElseThrow(() -> new NotFoundException("SPOT_NOT_FOUND", "No spot found with ID " + id + "."));
     }
 
     @Transactional
@@ -101,7 +101,7 @@ public class ParkingSpotService {
     public void deleteSpot(UUID id) {
         ParkingSpot spot = getSpotOrThrow(id);
         assignmentRepo.findBySpotIdAndRemovedAtIsNull(id).ifPresent(a -> {
-            throw new SpotOccupiedException("יש להסיר את הרכב מהמקום הזה לפני מחיקתו.", a.getCar().getChassisNumber());
+            throw new SpotOccupiedException("Remove the car from this spot before deleting it.", a.getCar().getChassisNumber());
         });
         UUID lotId = spot.getLot().getId();
         spotRepo.delete(spot);
