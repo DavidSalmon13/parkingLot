@@ -15,13 +15,15 @@ export function SpotGrid({ spots, lotName, onSelectSpot }: SpotGridProps) {
   const maxPosition = Math.max(...spots.map((s) => s.position));
 
   return (
-    <div
-      className="grid gap-2"
-      style={{ gridTemplateColumns: `repeat(${maxPosition}, minmax(60px, 1fr))` }}
-    >
-      {spots.map((spot) => (
-        <SpotCell key={spot.id} spot={spot} lotName={lotName} onSelect={onSelectSpot} />
-      ))}
+    <div className="overflow-x-auto">
+      <div
+        className="grid gap-2"
+        style={{ gridTemplateColumns: `repeat(${maxPosition}, minmax(60px, 1fr))`, minWidth: 'max-content' }}
+      >
+        {spots.map((spot) => (
+          <SpotCell key={spot.id} spot={spot} lotName={lotName} onSelect={onSelectSpot} />
+        ))}
+      </div>
     </div>
   );
 }
