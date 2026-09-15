@@ -23,7 +23,7 @@ export function Dashboard() {
   return (
     <div className="p-3 sm:p-6 flex flex-col gap-4 sm:gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl sm:text-3xl font-bold">Parking Lot Manager</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">Parking Lot</h1>
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 text-xs text-gray-500" title={wsConnected ? 'Live updates connected' : 'Reconnecting — falling back to periodic refresh'}>
             <span className={`h-2 w-2 rounded-full ${wsConnected ? 'bg-green-500' : 'bg-gray-400'}`} />
