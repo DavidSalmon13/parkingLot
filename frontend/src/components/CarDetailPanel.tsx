@@ -54,26 +54,26 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
     updateError instanceof ApiError ? updateError.message : updateError ? 'Something went wrong.' : null;
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-20" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-20" onClick={onClose}>
       <div
-        className="bg-white rounded-lg p-6 w-full max-w-sm transition-all duration-200 shadow-xl"
+        className="surface-modal p-6 w-full max-w-sm transition-all duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="text-sm text-gray-500">
-          {lotName} / {spot.label}
+        <div className="text-sm text-zinc-500">
+          {lotName} / <span className="text-amber-400">{spot.label}</span>
         </div>
 
-        {isLoading && <p className="mt-4 text-sm text-gray-500">Loading...</p>}
+        {isLoading && <p className="mt-4 text-sm text-zinc-400">Loading...</p>}
 
         {car && !editing && (
           <div className="mt-2 flex flex-col gap-2">
-            <h3 className="text-xl font-semibold">{car.chassisNumber}</h3>
-            <p>{car.clientName}</p>
-            <p className="text-sm text-gray-600">License plate: {car.licensePlateNumber}</p>
-            <p className="text-sm text-gray-600">Car type: {car.carType}</p>
-            {car.deliveryDate && <p className="text-sm text-gray-600">Delivery date: {car.deliveryDate}</p>}
+            <h3 className="text-xl font-semibold text-zinc-100 font-mono tracking-wide">{car.chassisNumber}</h3>
+            <p className="text-zinc-200">{car.clientName}</p>
+            <p className="text-sm text-zinc-400">License plate: {car.licensePlateNumber}</p>
+            <p className="text-sm text-zinc-400">Car type: {car.carType}</p>
+            {car.deliveryDate && <p className="text-sm text-zinc-400">Delivery date: {car.deliveryDate}</p>}
             {car.currentLocation && (
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-zinc-500">
                 Parked since {new Date(car.currentLocation.assignedAt).toLocaleString()}
               </p>
             )}
@@ -93,21 +93,13 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
               onDeliveryDateChange={setDeliveryDate}
             />
 
-            {updateErrorMessage && <p className="text-sm text-red-600">{updateErrorMessage}</p>}
+            {updateErrorMessage && <p className="text-sm text-rose-400">{updateErrorMessage}</p>}
 
             <div className="mt-2 flex justify-end gap-2">
-              <button
-                type="button"
-                className="px-3 py-1.5 text-sm rounded border border-gray-300"
-                onClick={() => setEditing(false)}
-              >
+              <button type="button" className="btn-secondary" onClick={() => setEditing(false)}>
                 Cancel
               </button>
-              <button
-                type="submit"
-                className="px-3 py-1.5 text-sm rounded bg-gray-900 text-white disabled:opacity-50"
-                disabled={updateCar.isPending}
-              >
+              <button type="submit" className="btn-primary" disabled={updateCar.isPending}>
                 Save
               </button>
             </div>
@@ -116,17 +108,13 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
 
         {car && !editing && !confirmingRemove && (
           <div className="mt-6 flex justify-end gap-2">
-            <button type="button" className="px-3 py-1.5 text-sm rounded border border-gray-300" onClick={onClose}>
+            <button type="button" className="btn-secondary" onClick={onClose}>
               Close
             </button>
-            <button type="button" className="px-3 py-1.5 text-sm rounded border border-gray-300" onClick={startEditing}>
+            <button type="button" className="btn-secondary" onClick={startEditing}>
               Edit
             </button>
-            <button
-              type="button"
-              className="px-3 py-1.5 text-sm rounded bg-red-600 text-white"
-              onClick={() => setConfirmingRemove(true)}
-            >
+            <button type="button" className="btn-danger" onClick={() => setConfirmingRemove(true)}>
               Remove car
             </button>
           </div>
@@ -134,17 +122,13 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
 
         {confirmingRemove && (
           <div className="mt-6 flex justify-end gap-2">
-            <span className="text-sm text-gray-600 mr-auto self-center">Are you sure?</span>
-            <button
-              type="button"
-              className="px-3 py-1.5 text-sm rounded border border-gray-300"
-              onClick={() => setConfirmingRemove(false)}
-            >
+            <span className="text-sm text-zinc-400 mr-auto self-center">Are you sure?</span>
+            <button type="button" className="btn-secondary" onClick={() => setConfirmingRemove(false)}>
               Cancel
             </button>
             <button
               type="button"
-              className="px-3 py-1.5 text-sm rounded bg-red-600 text-white disabled:opacity-50"
+              className="btn-danger"
               disabled={removeCar.isPending}
               onClick={() => removeCar.mutate(spot.id, { onSuccess: onClose })}
             >

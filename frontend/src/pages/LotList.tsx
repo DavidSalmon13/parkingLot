@@ -69,8 +69,8 @@ export function LotList() {
   return (
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
-        <h2 className="text-xl font-semibold">Lots</h2>
-        {isLoading && <p className="text-gray-500">Loading lots...</p>}
+        <h2 className="text-xl font-semibold text-zinc-100">Lots</h2>
+        {isLoading && <p className="text-zinc-400">Loading lots...</p>}
         <div className="flex flex-col gap-2">
           {lots.map((lot) => {
             const occupied = lot.spots.filter((s) => s.status === 'occupied').length;
@@ -83,12 +83,12 @@ export function LotList() {
                 : null;
 
             return (
-              <div key={lot.id} className="border rounded-lg p-3 flex flex-col gap-2">
+              <div key={lot.id} className="surface-card p-3 flex flex-col gap-2">
                 <div className="flex items-center justify-between gap-3">
                   {renamingId === lot.id ? (
                     <input
                       autoFocus
-                      className="border rounded px-2 py-1 text-sm flex-1"
+                      className="input-field text-sm flex-1"
                       value={renameValue}
                       onChange={(e) => setRenameValue(e.target.value)}
                       onBlur={() => commitRename(lot.id)}
@@ -98,17 +98,17 @@ export function LotList() {
                       }}
                     />
                   ) : (
-                    <Link to={`/admin/lots/${lot.id}`} className="font-semibold hover:underline">
+                    <Link to={`/admin/lots/${lot.id}`} className="font-semibold text-zinc-100 hover:text-amber-400 transition-colors">
                       {lot.name}
                     </Link>
                   )}
-                  <span className="text-sm text-gray-500 whitespace-nowrap">
+                  <span className="text-sm text-zinc-400 whitespace-nowrap">
                     {occupied}/{lot.spots.length} occupied
                   </span>
                   <div className="flex gap-2">
                     <button
                       type="button"
-                      className="px-2 py-1 text-xs rounded border border-gray-300"
+                      className="btn-secondary text-xs px-2 py-1"
                       onClick={() => startRename(lot.id, lot.name)}
                     >
                       Rename
@@ -117,14 +117,14 @@ export function LotList() {
                       <>
                         <button
                           type="button"
-                          className="px-2 py-1 text-xs rounded border border-gray-300"
+                          className="btn-secondary text-xs px-2 py-1"
                           onClick={() => setConfirmingDeleteId(null)}
                         >
                           Cancel
                         </button>
                         <button
                           type="button"
-                          className="px-2 py-1 text-xs rounded bg-red-600 text-white disabled:opacity-50"
+                          className="btn-danger text-xs px-2 py-1"
                           disabled={deleteLot.isPending}
                           onClick={() => deleteLot.mutate(lot.id, { onSuccess: () => setConfirmingDeleteId(null) })}
                         >
@@ -134,7 +134,7 @@ export function LotList() {
                     ) : (
                       <button
                         type="button"
-                        className="px-2 py-1 text-xs rounded border border-red-300 text-red-600"
+                        className="btn-danger-outline text-xs px-2 py-1"
                         onClick={() => {
                           setConfirmingDeleteId(lot.id);
                           deleteLot.reset();
@@ -146,36 +146,32 @@ export function LotList() {
                   </div>
                 </div>
                 {renamingId === lot.id && renameErrorMessage && (
-                  <p className="text-sm text-red-600">{renameErrorMessage}</p>
+                  <p className="text-sm text-rose-400">{renameErrorMessage}</p>
                 )}
-                {deleteErrorMessage && <p className="text-sm text-red-600">{deleteErrorMessage}</p>}
+                {deleteErrorMessage && <p className="text-sm text-rose-400">{deleteErrorMessage}</p>}
               </div>
             );
           })}
-          {!isLoading && lots.length === 0 && <p className="text-sm text-gray-500">No lots yet.</p>}
+          {!isLoading && lots.length === 0 && <p className="text-sm text-zinc-500">No lots yet.</p>}
         </div>
       </section>
 
       <section className="flex flex-col gap-3 max-w-sm">
-        <h2 className="text-xl font-semibold">New Lot</h2>
+        <h2 className="text-xl font-semibold text-zinc-100">New Lot</h2>
         <form onSubmit={handleCreate} className="flex flex-col gap-3">
-          <label className="text-sm">
+          <label className="text-sm text-zinc-300">
             Lot name
             <input
-              className="mt-1 w-full border rounded px-2 py-1.5"
+              className="input-field mt-1"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               required
             />
           </label>
-          <p className="text-xs text-gray-500">Optionally generate a spot grid now — you can also add spots later.</p>
+          <p className="text-xs text-zinc-500">Optionally generate a spot grid now — you can also add spots later.</p>
           <GridInput onChange={setNewGrid} />
-          {createErrorMessage && <p className="text-sm text-red-600">{createErrorMessage}</p>}
-          <button
-            type="submit"
-            className="px-3 py-1.5 text-sm rounded bg-gray-900 text-white disabled:opacity-50 self-start"
-            disabled={createLot.isPending}
-          >
+          {createErrorMessage && <p className="text-sm text-rose-400">{createErrorMessage}</p>}
+          <button type="submit" className="btn-primary self-start" disabled={createLot.isPending}>
             Create lot
           </button>
         </form>

@@ -21,38 +21,38 @@ export function CarFieldsInputs({
 }: CarFieldsInputsProps) {
   return (
     <>
-      <label className="text-sm">
+      <label className="text-sm text-zinc-300">
         License plate number
         <input
-          className="mt-1 w-full border rounded px-2 py-1.5"
+          className="input-field mt-1"
           value={licensePlateNumber}
           onChange={(e) => onLicensePlateNumberChange(e.target.value)}
           required
         />
       </label>
-      <label className="text-sm">
+      <label className="text-sm text-zinc-300">
         Car type
         <input
-          className="mt-1 w-full border rounded px-2 py-1.5"
+          className="input-field mt-1"
           value={carType}
           onChange={(e) => onCarTypeChange(e.target.value)}
           required
         />
       </label>
-      <label className="text-sm">
+      <label className="text-sm text-zinc-300">
         Client name
         <input
-          className="mt-1 w-full border rounded px-2 py-1.5"
+          className="input-field mt-1"
           value={clientName}
           onChange={(e) => onClientNameChange(e.target.value)}
           required
         />
       </label>
-      <label className="text-sm">
+      <label className="text-sm text-zinc-300">
         Delivery date (optional)
         <input
           type="date"
-          className="mt-1 w-full border rounded px-2 py-1.5"
+          className="input-field mt-1 [color-scheme:dark]"
           value={deliveryDate}
           onChange={(e) => onDeliveryDateChange(e.target.value)}
         />

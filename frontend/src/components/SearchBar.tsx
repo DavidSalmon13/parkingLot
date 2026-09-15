@@ -23,7 +23,7 @@ export function SearchBar() {
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-2">
       <input
-        className="border rounded px-2 py-1.5 text-sm"
+        className="input-field w-48 sm:w-56"
         placeholder="Find car by chassis number..."
         value={term}
         onChange={(e) => {
@@ -32,10 +32,10 @@ export function SearchBar() {
         }}
         maxLength={50}
       />
-      <button type="submit" className="px-3 py-1.5 text-sm rounded bg-gray-900 text-white">
+      <button type="submit" className="btn-primary">
         Find
       </button>
-      {notFound && <span className="text-sm text-red-600">No car found with that chassis number.</span>}
+      {notFound && <span className="text-sm text-rose-400">No car found with that chassis number.</span>}
     </form>
   );
 }

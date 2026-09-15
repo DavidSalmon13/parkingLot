@@ -41,13 +41,13 @@ export function LotEditor() {
   const [confirmingDeleteSpotId, setConfirmingDeleteSpotId] = useState<string | null>(null);
   const deleteSpot = useDeleteSpot();
 
-  if (isLoading && !lot) return <p className="text-gray-500">Loading lot...</p>;
+  if (isLoading && !lot) return <p className="text-zinc-400">Loading lot...</p>;
 
   if (!lot) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="text-red-600">Lot not found.</p>
-        <Link to="/admin" className="text-sm underline">
+        <p className="text-rose-400">Lot not found.</p>
+        <Link to="/admin" className="text-sm text-zinc-300 underline">
           ← Back to lots
         </Link>
       </div>
@@ -116,13 +116,13 @@ export function LotEditor() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <Link to="/admin" className="text-sm text-gray-600 underline self-start">
+        <Link to="/admin" className="link-muted self-start">
           ← Back to lots
         </Link>
         {renaming ? (
           <input
             autoFocus
-            className="border rounded px-2 py-1 text-2xl font-bold"
+            className="input-field text-2xl font-bold w-auto"
             value={renameValue}
             onChange={(e) => setRenameValue(e.target.value)}
             onBlur={() => {
@@ -142,7 +142,7 @@ export function LotEditor() {
           />
         ) : (
           <h2
-            className="text-2xl font-bold cursor-pointer"
+            className="text-2xl font-bold cursor-pointer text-zinc-100 tracking-tight"
             onClick={() => {
               setRenaming(true);
               setRenameValue(lot.name);
@@ -152,71 +152,63 @@ export function LotEditor() {
             {lot.name}
           </h2>
         )}
-        {renameErrorMessage && <p className="text-sm text-red-600">{renameErrorMessage}</p>}
+        {renameErrorMessage && <p className="text-sm text-rose-400">{renameErrorMessage}</p>}
       </div>
 
       <section className="flex flex-col gap-3 max-w-sm">
-        <h3 className="text-lg font-semibold">Generate spots</h3>
+        <h3 className="text-lg font-semibold text-zinc-100">Generate spots</h3>
         <form onSubmit={handleGenerate} className="flex flex-col gap-3">
           <GridInput onChange={setGrid} existingRowLabels={[...new Set(lot.spots.map((s) => s.row))].sort()} />
-          {generateErrorMessage && <p className="text-sm text-red-600">{generateErrorMessage}</p>}
-          <button
-            type="submit"
-            className="px-3 py-1.5 text-sm rounded bg-gray-900 text-white disabled:opacity-50 self-start"
-            disabled={!grid || generateSpots.isPending}
-          >
+          {generateErrorMessage && <p className="text-sm text-rose-400">{generateErrorMessage}</p>}
+          <button type="submit" className="btn-primary self-start" disabled={!grid || generateSpots.isPending}>
             Generate
           </button>
         </form>
       </section>
 
       <section className="flex flex-col gap-3 max-w-md">
-        <h3 className="text-lg font-semibold">Add custom spot</h3>
+        <h3 className="text-lg font-semibold text-zinc-100">Add custom spot</h3>
         <form onSubmit={handleAddSpot} className="flex gap-2 items-end flex-wrap">
-          <label className="text-sm">
+          <label className="text-sm text-zinc-300">
             Label
             <input
-              className="mt-1 border rounded px-2 py-1.5 w-24"
+              className="input-field mt-1 w-24"
               value={newLabel}
               onChange={(e) => setNewLabel(e.target.value)}
               required
             />
           </label>
-          <label className="text-sm">
+          <label className="text-sm text-zinc-300">
             Row
             <input
-              className="mt-1 border rounded px-2 py-1.5 w-20"
+              className="input-field mt-1 w-20"
               value={newRow}
               onChange={(e) => setNewRow(e.target.value)}
               required
             />
           </label>
-          <label className="text-sm">
+          <label className="text-sm text-zinc-300">
             Position
             <input
               type="number"
-              className="mt-1 border rounded px-2 py-1.5 w-20"
+              className="input-field mt-1 w-20"
               value={newPosition}
               onChange={(e) => setNewPosition(e.target.value)}
               required
             />
           </label>
-          <button
-            type="submit"
-            className="px-3 py-1.5 text-sm rounded bg-gray-900 text-white disabled:opacity-50"
-            disabled={addSpot.isPending}
-          >
+          <button type="submit" className="btn-primary" disabled={addSpot.isPending}>
             Add spot
           </button>
         </form>
-        {addSpotErrorMessage && <p className="text-sm text-red-600">{addSpotErrorMessage}</p>}
+        {addSpotErrorMessage && <p className="text-sm text-rose-400">{addSpotErrorMessage}</p>}
       </section>
 
       <section className="flex flex-col gap-3">
-        <h3 className="text-lg font-semibold">Spots</h3>
+        <h3 className="text-lg font-semibold text-zinc-100">Spots</h3>
         <table className="text-sm border-collapse">
           <thead>
-            <tr className="text-left text-gray-500">
+            <tr className="text-left text-zinc-500">
               <th className="pr-4 pb-2">Label</th>
               <th className="pr-4 pb-2">Row</th>
               <th className="pr-4 pb-2">Position</th>
@@ -226,19 +218,19 @@ export function LotEditor() {
           </thead>
           <tbody>
             {sortedSpots.map((spot) => (
-              <tr key={spot.id} className="border-t align-top">
+              <tr key={spot.id} className="border-t border-zinc-800 align-top text-zinc-200">
                 {editingSpotId === spot.id ? (
                   <>
                     <td className="pr-4 py-1">
                       <input
-                        className="border rounded px-1 py-0.5 w-20"
+                        className="input-field py-0.5 w-20"
                         value={editLabel}
                         onChange={(e) => setEditLabel(e.target.value)}
                       />
                     </td>
                     <td className="pr-4 py-1">
                       <input
-                        className="border rounded px-1 py-0.5 w-16"
+                        className="input-field py-0.5 w-16"
                         value={editRow}
                         onChange={(e) => setEditRow(e.target.value)}
                       />
@@ -246,31 +238,31 @@ export function LotEditor() {
                     <td className="pr-4 py-1">
                       <input
                         type="number"
-                        className="border rounded px-1 py-0.5 w-16"
+                        className="input-field py-0.5 w-16"
                         value={editPosition}
                         onChange={(e) => setEditPosition(e.target.value)}
                       />
                     </td>
-                    <td className="pr-4 py-1 text-gray-500">{spot.status}</td>
+                    <td className="pr-4 py-1 text-zinc-500">{spot.status}</td>
                     <td className="py-1">
                       <div className="flex gap-2">
                         <button
                           type="button"
-                          className="px-2 py-1 text-xs rounded border border-gray-300"
+                          className="btn-secondary text-xs px-2 py-1"
                           onClick={() => setEditingSpotId(null)}
                         >
                           Cancel
                         </button>
                         <button
                           type="button"
-                          className="px-2 py-1 text-xs rounded bg-gray-900 text-white disabled:opacity-50"
+                          className="btn-primary text-xs px-2 py-1"
                           disabled={updateSpot.isPending}
                           onClick={() => commitEdit(spot.id)}
                         >
                           Save
                         </button>
                       </div>
-                      {editErrorMessage && <p className="text-xs text-red-600 mt-1">{editErrorMessage}</p>}
+                      {editErrorMessage && <p className="text-xs text-rose-400 mt-1">{editErrorMessage}</p>}
                     </td>
                   </>
                 ) : (
@@ -279,16 +271,16 @@ export function LotEditor() {
                     <td className="pr-4 py-1">{spot.row}</td>
                     <td className="pr-4 py-1">{spot.position}</td>
                     <td className="pr-4 py-1">
-                      <span className={spot.status === 'occupied' ? 'text-red-600' : 'text-green-600'}>
+                      <span className={spot.status === 'occupied' ? 'text-rose-400' : 'text-emerald-400'}>
                         {spot.status}
                       </span>
-                      {spot.car && <span className="text-gray-500"> ({spot.car.chassisNumber})</span>}
+                      {spot.car && <span className="text-zinc-500"> ({spot.car.chassisNumber})</span>}
                     </td>
                     <td className="py-1">
                       <div className="flex gap-2 items-center">
                         <button
                           type="button"
-                          className="px-2 py-1 text-xs rounded border border-gray-300"
+                          className="btn-secondary text-xs px-2 py-1"
                           onClick={() => startEdit(spot)}
                         >
                           Edit
@@ -297,14 +289,14 @@ export function LotEditor() {
                           <>
                             <button
                               type="button"
-                              className="px-2 py-1 text-xs rounded border border-gray-300"
+                              className="btn-secondary text-xs px-2 py-1"
                               onClick={() => setConfirmingDeleteSpotId(null)}
                             >
                               Cancel
                             </button>
                             <button
                               type="button"
-                              className="px-2 py-1 text-xs rounded bg-red-600 text-white disabled:opacity-50"
+                              className="btn-danger text-xs px-2 py-1"
                               disabled={deleteSpot.isPending}
                               onClick={() =>
                                 deleteSpot.mutate(spot.id, { onSuccess: () => setConfirmingDeleteSpotId(null) })
@@ -316,7 +308,7 @@ export function LotEditor() {
                         ) : (
                           <button
                             type="button"
-                            className="px-2 py-1 text-xs rounded border border-red-300 text-red-600"
+                            className="btn-danger-outline text-xs px-2 py-1"
                             onClick={() => {
                               setConfirmingDeleteSpotId(spot.id);
                               deleteSpot.reset();
@@ -327,7 +319,7 @@ export function LotEditor() {
                         )}
                       </div>
                       {confirmingDeleteSpotId === spot.id && deleteErrorMessage && (
-                        <p className="text-xs text-red-600 mt-1">{deleteErrorMessage}</p>
+                        <p className="text-xs text-rose-400 mt-1">{deleteErrorMessage}</p>
                       )}
                     </td>
                   </>
@@ -336,7 +328,7 @@ export function LotEditor() {
             ))}
           </tbody>
         </table>
-        {sortedSpots.length === 0 && <p className="text-sm text-gray-500">No spots yet.</p>}
+        {sortedSpots.length === 0 && <p className="text-sm text-zinc-500">No spots yet.</p>}
       </section>
     </div>
   );

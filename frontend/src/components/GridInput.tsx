@@ -57,12 +57,12 @@ export function GridInput({ onChange, existingRowLabels = [] }: GridInputProps) 
           {rows.map((row, i) => (
             <li
               key={`${row.label}-${i}`}
-              className="flex items-center justify-between text-sm bg-gray-50 border rounded px-2 py-1"
+              className="flex items-center justify-between text-sm bg-zinc-900 border border-zinc-800 rounded-md px-2 py-1 text-zinc-300"
             >
               <span>
                 {existingRowLabels.includes(row.label) ? 'Add to row' : 'New row'} {row.label} — +{row.count} spots
               </span>
-              <button type="button" onClick={() => removeRow(i)} className="text-red-600 hover:underline">
+              <button type="button" onClick={() => removeRow(i)} className="text-rose-400 hover:underline">
                 Remove
               </button>
             </li>
@@ -71,13 +71,13 @@ export function GridInput({ onChange, existingRowLabels = [] }: GridInputProps) 
       )}
 
       {canAddToExisting && (
-        <div className="flex gap-4 text-sm">
+        <div className="flex gap-4 text-sm text-zinc-300">
           <label className="flex items-center gap-1.5">
-            <input type="radio" checked={mode === 'new'} onChange={() => setMode('new')} />
+            <input type="radio" checked={mode === 'new'} onChange={() => setMode('new')} className="accent-amber-500" />
             New row
           </label>
           <label className="flex items-center gap-1.5">
-            <input type="radio" checked={mode === 'existing'} onChange={() => setMode('existing')} />
+            <input type="radio" checked={mode === 'existing'} onChange={() => setMode('existing')} className="accent-amber-500" />
             Add to existing row
           </label>
         </div>
@@ -85,10 +85,10 @@ export function GridInput({ onChange, existingRowLabels = [] }: GridInputProps) 
 
       <div className="flex items-end gap-2">
         {showingExistingRowMode ? (
-          <label className="text-sm flex-1">
+          <label className="text-sm flex-1 text-zinc-300">
             Row
             <select
-              className="mt-1 w-full border rounded px-2 py-1.5"
+              className="input-field mt-1"
               value={selectedExistingRow}
               onChange={(e) => setSelectedExistingRow(e.target.value)}
             >
@@ -100,28 +100,26 @@ export function GridInput({ onChange, existingRowLabels = [] }: GridInputProps) 
             </select>
           </label>
         ) : (
-          <div className="text-sm flex-1">
+          <div className="text-sm flex-1 text-zinc-300">
             Row
-            <div className="mt-1 border rounded px-2 py-1.5 bg-gray-50 text-gray-700">{suggestedLabel || '—'}</div>
+            <div className="mt-1 border border-zinc-700 rounded-md px-2 py-1.5 bg-zinc-900 text-zinc-400">
+              {suggestedLabel || '—'}
+            </div>
           </div>
         )}
-        <label className="text-sm flex-1">
+        <label className="text-sm flex-1 text-zinc-300">
           Number of spots
           <input
             type="number"
             min={1}
             max={200}
-            className="mt-1 w-full border rounded px-2 py-1.5"
+            className="input-field mt-1"
             value={countText}
             onChange={(e) => setCountText(e.target.value)}
             placeholder="10"
           />
         </label>
-        <button
-          type="button"
-          onClick={addRow}
-          className="border rounded px-3 py-1.5 text-sm font-medium hover:bg-gray-50"
-        >
+        <button type="button" onClick={addRow} className="btn-secondary">
           Add
         </button>
       </div>

@@ -23,28 +23,29 @@ export function Dashboard() {
   return (
     <div className="p-3 sm:p-6 flex flex-col gap-4 sm:gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl sm:text-3xl font-bold">Parking Lot</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-50">
+          Parking <span className="text-amber-400">Lot</span>
+        </h1>
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 text-xs text-gray-500" title={wsConnected ? 'Live updates connected' : 'Reconnecting — falling back to periodic refresh'}>
-            <span className={`h-2 w-2 rounded-full ${wsConnected ? 'bg-green-500' : 'bg-gray-400'}`} />
+          <span
+            className="flex items-center gap-1.5 text-xs text-zinc-400"
+            title={wsConnected ? 'Live updates connected' : 'Reconnecting — falling back to periodic refresh'}
+          >
+            <span className={`h-2 w-2 rounded-full ${wsConnected ? 'bg-emerald-400 shadow-[0_0_6px_theme(colors.emerald.400)]' : 'bg-zinc-600'}`} />
             {wsConnected ? 'Live' : 'Reconnecting…'}
           </span>
           <SearchBar />
-          <button
-            type="button"
-            className="text-sm text-gray-600 underline whitespace-nowrap"
-            onClick={() => setShowUnassigned(true)}
-          >
+          <button type="button" className="link-muted whitespace-nowrap" onClick={() => setShowUnassigned(true)}>
             Unassigned cars
           </button>
-          <Link to="/admin" className="text-sm text-gray-600 underline whitespace-nowrap">
+          <Link to="/admin" className="link-muted whitespace-nowrap">
             Admin
           </Link>
         </div>
       </div>
 
-      {isLoading && <p className="text-gray-500">Loading lots...</p>}
-      {isError && <p className="text-red-600">Failed to load lots.</p>}
+      {isLoading && <p className="text-zinc-400">Loading lots...</p>}
+      {isError && <p className="text-rose-400">Failed to load lots.</p>}
 
       <div className="flex flex-col gap-4 sm:gap-6">
         {lots.map((lot) => (

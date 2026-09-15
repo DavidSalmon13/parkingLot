@@ -14,6 +14,7 @@ export function SpotCell({ spot, lotName, onSelect }: SpotCellProps) {
   const highlightedSpotId = useDashboardStore((s) => s.highlightedSpotId);
   const setHighlightedSpotId = useDashboardStore((s) => s.setHighlightedSpotId);
   const isHighlighted = highlightedSpotId === spot.id;
+  const occupied = spot.status === 'occupied';
 
   useEffect(() => {
     if (!isHighlighted) return;
@@ -24,20 +25,35 @@ export function SpotCell({ spot, lotName, onSelect }: SpotCellProps) {
   return (
     <div
       id={`spot-${spot.id}`}
-      className={[
-        'relative border-2 rounded p-1 sm:p-2 flex flex-col items-center justify-center cursor-pointer transition-colors overflow-hidden',
-        spot.status === 'occupied' ? 'bg-red-100 border-red-500' : 'bg-green-100 border-green-500',
-        isHighlighted ? 'ring-4 ring-yellow-400 animate-pulse' : '',
-      ].join(' ')}
+      className="relative flex flex-col items-center gap-1 cursor-pointer"
       onClick={() => onSelect(spot)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {hovered && <SpotTooltip lotName={lotName} spotLabel={spot.label} />}
-      <span className="font-semibold text-xs sm:text-sm truncate max-w-full">{spot.label}</span>
-      {spot.status === 'occupied' && spot.car && (
-        <span className="text-[10px] sm:text-sm text-gray-700 truncate max-w-full">{spot.car.chassisNumber}</span>
-      )}
+
+      <span className="px-1.5 py-0.5 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300 text-[9px] sm:text-[10px] font-semibold tracking-wide truncate max-w-full">
+        {spot.label}
+      </span>
+
+      <div
+        className={[
+          'relative w-full aspect-square rounded-lg border-2 flex flex-col items-center justify-center overflow-hidden p-0.5 transition-all',
+          occupied
+            ? 'bg-zinc-900 border-rose-600/70 shadow-[0_0_10px_-2px_theme(colors.rose.700)]'
+            : 'bg-zinc-900/60 border-dashed border-zinc-700 hover:border-amber-500/60',
+          isHighlighted ? 'ring-4 ring-amber-400 animate-pulse' : '',
+        ].join(' ')}
+      >
+        {occupied && spot.car && (
+          <>
+            <span className="text-lg sm:text-2xl leading-none">🚗</span>
+            <span className="mt-0.5 px-1 py-0.5 rounded bg-zinc-950 border border-amber-500/40 text-amber-400 text-[7px] sm:text-[9px] font-mono tracking-wider truncate max-w-[90%]">
+              {spot.car.chassisNumber}
+            </span>
+          </>
+        )}
+      </div>
     </div>
   );
 }

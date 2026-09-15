@@ -50,21 +50,23 @@ export function AddCarModal({ spot, onClose }: AddCarModalProps) {
     error instanceof ApiError ? ERROR_COPY[error.error] ?? error.message : error ? 'Something went wrong.' : null;
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-20" onClick={onClose}>
-      <div className="bg-white rounded-lg p-6 w-full max-w-sm shadow-xl" onClick={(e) => e.stopPropagation()}>
-        <h3 className="text-lg font-semibold mb-4">Add car to spot {spot.label}</h3>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-20" onClick={onClose}>
+      <div className="surface-modal p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+        <h3 className="text-lg font-semibold mb-4 text-zinc-100">
+          Add car to spot <span className="text-amber-400">{spot.label}</span>
+        </h3>
 
         <div className="flex gap-2 mb-4">
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm rounded ${tab === 'existing' ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}
+            className={`px-3 py-1.5 text-sm rounded-md transition-colors ${tab === 'existing' ? 'bg-amber-500 text-zinc-950 font-semibold' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'}`}
             onClick={() => setTab('existing')}
           >
             Existing car
           </button>
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm rounded ${tab === 'new' ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}
+            className={`px-3 py-1.5 text-sm rounded-md transition-colors ${tab === 'new' ? 'bg-amber-500 text-zinc-950 font-semibold' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'}`}
             onClick={() => setTab('new')}
           >
             New car
@@ -72,10 +74,10 @@ export function AddCarModal({ spot, onClose }: AddCarModalProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <label className="text-sm">
+          <label className="text-sm text-zinc-300">
             Chassis number
             <input
-              className="mt-1 w-full border rounded px-2 py-1.5"
+              className="input-field mt-1"
               value={carId}
               onChange={(e) => setCarId(e.target.value)}
               maxLength={50}
@@ -96,17 +98,13 @@ export function AddCarModal({ spot, onClose }: AddCarModalProps) {
             />
           )}
 
-          {errorMessage && <p className="text-sm text-red-600">{errorMessage}</p>}
+          {errorMessage && <p className="text-sm text-rose-400">{errorMessage}</p>}
 
           <div className="mt-2 flex justify-end gap-2">
-            <button type="button" className="px-3 py-1.5 text-sm rounded border border-gray-300" onClick={onClose}>
+            <button type="button" className="btn-secondary" onClick={onClose}>
               Cancel
             </button>
-            <button
-              type="submit"
-              className="px-3 py-1.5 text-sm rounded bg-gray-900 text-white disabled:opacity-50"
-              disabled={assignCar.isPending}
-            >
+            <button type="submit" className="btn-primary" disabled={assignCar.isPending}>
               Assign
             </button>
           </div>

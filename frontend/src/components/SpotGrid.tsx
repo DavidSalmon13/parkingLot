@@ -9,7 +9,7 @@ interface SpotGridProps {
 
 export function SpotGrid({ spots, lotName, onSelectSpot }: SpotGridProps) {
   if (spots.length === 0) {
-    return <p className="text-sm text-gray-500">No spots yet.</p>;
+    return <p className="text-sm text-zinc-500">No spots yet.</p>;
   }
 
   const maxPosition = Math.max(...spots.map((s) => s.position));

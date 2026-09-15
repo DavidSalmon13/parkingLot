@@ -18,21 +18,23 @@ export function UnassignedCarsPanel({ onClose }: UnassignedCarsPanelProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-20" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-20" onClick={onClose}>
       <div
-        className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[80vh] flex flex-col shadow-xl"
+        className="surface-modal p-6 w-full max-w-lg max-h-[80vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Unassigned cars</h3>
-          <button type="button" className="px-3 py-1.5 text-sm rounded border border-gray-300" onClick={onClose}>
+          <h3 className="text-lg font-semibold text-zinc-100">
+            <span className="text-amber-400">Unassigned</span> cars
+          </h3>
+          <button type="button" className="btn-secondary" onClick={onClose}>
             Close
           </button>
         </div>
 
-        {isLoading && <p className="text-sm text-gray-500">Loading...</p>}
-        {isError && <p className="text-sm text-red-600">Failed to load unassigned cars.</p>}
-        {cars && cars.length === 0 && <p className="text-sm text-gray-500">No unassigned cars.</p>}
+        {isLoading && <p className="text-sm text-zinc-400">Loading...</p>}
+        {isError && <p className="text-sm text-rose-400">Failed to load unassigned cars.</p>}
+        {cars && cars.length === 0 && <p className="text-sm text-zinc-500">No unassigned cars.</p>}
 
         <div className="flex flex-col gap-3 overflow-y-auto">
           {cars?.map((car) => (
@@ -86,24 +88,24 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
 
   if (!editing) {
     return (
-      <div className="border rounded p-3 flex flex-col gap-1">
+      <div className="border border-zinc-800 bg-zinc-950/60 rounded-lg p-3 flex flex-col gap-1">
         <div className="flex items-center justify-between">
-          <h4 className="font-semibold">{car.chassisNumber}</h4>
-          <button type="button" className="px-3 py-1.5 text-sm rounded border border-gray-300" onClick={startEdit}>
+          <h4 className="font-semibold text-zinc-100 font-mono tracking-wide">{car.chassisNumber}</h4>
+          <button type="button" className="btn-secondary" onClick={startEdit}>
             Edit
           </button>
         </div>
-        <p className="text-sm">{car.clientName}</p>
-        <p className="text-sm text-gray-600">License plate: {car.licensePlateNumber}</p>
-        <p className="text-sm text-gray-600">Car type: {car.carType}</p>
-        {car.deliveryDate && <p className="text-sm text-gray-600">Delivery date: {car.deliveryDate}</p>}
+        <p className="text-sm text-zinc-200">{car.clientName}</p>
+        <p className="text-sm text-zinc-400">License plate: {car.licensePlateNumber}</p>
+        <p className="text-sm text-zinc-400">Car type: {car.carType}</p>
+        {car.deliveryDate && <p className="text-sm text-zinc-400">Delivery date: {car.deliveryDate}</p>}
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSave} className="border rounded p-3 flex flex-col gap-2">
-      <h4 className="font-semibold">{car.chassisNumber}</h4>
+    <form onSubmit={handleSave} className="border border-zinc-800 bg-zinc-950/60 rounded-lg p-3 flex flex-col gap-2">
+      <h4 className="font-semibold text-zinc-100 font-mono tracking-wide">{car.chassisNumber}</h4>
       <CarFieldsInputs
         licensePlateNumber={licensePlateNumber}
         carType={carType}
@@ -115,17 +117,13 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
         onDeliveryDateChange={setDeliveryDate}
       />
 
-      {errorMessage && <p className="text-sm text-red-600">{errorMessage}</p>}
+      {errorMessage && <p className="text-sm text-rose-400">{errorMessage}</p>}
 
       <div className="mt-1 flex justify-end gap-2">
-        <button type="button" className="px-3 py-1.5 text-sm rounded border border-gray-300" onClick={onStopEdit}>
+        <button type="button" className="btn-secondary" onClick={onStopEdit}>
           Cancel
         </button>
-        <button
-          type="submit"
-          className="px-3 py-1.5 text-sm rounded bg-gray-900 text-white disabled:opacity-50"
-          disabled={updateCar.isPending}
-        >
+        <button type="submit" className="btn-primary" disabled={updateCar.isPending}>
           Save
         </button>
       </div>

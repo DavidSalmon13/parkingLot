@@ -1,1 +1,65 @@
 @import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #161616 0%, #0a0a0a 55%, #000000 100%);
+  background-attachment: fixed;
+  color: #e4e4e7;
+}
+
+::selection {
+  background: #d4af37;
+  color: #0a0a0a;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+@layer components {
+  .surface-card {
+    @apply bg-zinc-900/70 border border-zinc-800 rounded-xl shadow-lg shadow-black/40 backdrop-blur-sm;
+  }
+  .surface-modal {
+    @apply bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl shadow-black/60;
+  }
+  .btn-primary {
+    @apply px-3 py-1.5 text-sm font-semibold rounded-md bg-amber-500 text-zinc-950 hover:bg-amber-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply px-3 py-1.5 text-sm font-medium rounded-md border border-zinc-700 text-zinc-200 hover:bg-zinc-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn-danger {
+    @apply px-3 py-1.5 text-sm font-medium rounded-md bg-rose-600 text-white hover:bg-rose-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn-danger-outline {
+    @apply px-3 py-1.5 text-sm font-medium rounded-md border border-rose-900 text-rose-400 hover:bg-rose-950/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .input-field {
+    @apply w-full bg-zinc-950 border border-zinc-700 rounded-md px-2 py-1.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/60;
+  }
+  .link-muted {
+    @apply text-sm text-zinc-400 hover:text-amber-400 underline underline-offset-2 transition-colors;
+  }
+}
