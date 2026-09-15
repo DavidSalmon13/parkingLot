@@ -25,16 +25,16 @@ export function UnassignedCarsPanel({ onClose }: UnassignedCarsPanelProps) {
       >
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-zinc-100">
-            <span className="text-amber-400">Unassigned</span> cars
+            רכבים <span className="text-amber-400">לא משויכים</span>
           </h3>
           <button type="button" className="btn-secondary" onClick={onClose}>
-            Close
+            סגירה
           </button>
         </div>
 
-        {isLoading && <p className="text-sm text-zinc-400">Loading...</p>}
-        {isError && <p className="text-sm text-rose-400">Failed to load unassigned cars.</p>}
-        {cars && cars.length === 0 && <p className="text-sm text-zinc-500">No unassigned cars.</p>}
+        {isLoading && <p className="text-sm text-zinc-400">טוען...</p>}
+        {isError && <p className="text-sm text-rose-400">טעינת הרכבים הלא משויכים נכשלה.</p>}
+        {cars && cars.length === 0 && <p className="text-sm text-zinc-500">אין רכבים לא משויכים.</p>}
 
         <div className="flex flex-col gap-3 overflow-y-auto">
           {cars?.map((car) => (
@@ -84,7 +84,7 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
   };
 
   const error = updateCar.error;
-  const errorMessage = error instanceof ApiError ? error.message : error ? 'Something went wrong.' : null;
+  const errorMessage = error instanceof ApiError ? error.message : error ? 'משהו השתבש.' : null;
 
   if (!editing) {
     return (
@@ -92,13 +92,13 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
         <div className="flex items-center justify-between">
           <h4 className="font-semibold text-zinc-100 font-mono tracking-wide">{car.chassisNumber}</h4>
           <button type="button" className="btn-secondary" onClick={startEdit}>
-            Edit
+            עריכה
           </button>
         </div>
         <p className="text-sm text-zinc-200">{car.clientName}</p>
-        <p className="text-sm text-zinc-400">License plate: {car.licensePlateNumber}</p>
-        <p className="text-sm text-zinc-400">Car type: {car.carType}</p>
-        {car.deliveryDate && <p className="text-sm text-zinc-400">Delivery date: {car.deliveryDate}</p>}
+        <p className="text-sm text-zinc-400">מספר רישוי: {car.licensePlateNumber}</p>
+        <p className="text-sm text-zinc-400">סוג רכב: {car.carType}</p>
+        {car.deliveryDate && <p className="text-sm text-zinc-400">תאריך אספקה: {car.deliveryDate}</p>}
       </div>
     );
   }
@@ -121,10 +121,10 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
 
       <div className="mt-1 flex justify-end gap-2">
         <button type="button" className="btn-secondary" onClick={onStopEdit}>
-          Cancel
+          ביטול
         </button>
         <button type="submit" className="btn-primary" disabled={updateCar.isPending}>
-          Save
+          שמירה
         </button>
       </div>
     </form>

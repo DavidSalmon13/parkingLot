@@ -51,7 +51,7 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
 
   const updateError = updateCar.error;
   const updateErrorMessage =
-    updateError instanceof ApiError ? updateError.message : updateError ? 'Something went wrong.' : null;
+    updateError instanceof ApiError ? updateError.message : updateError ? 'משהו השתבש.' : null;
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-20" onClick={onClose}>
@@ -63,18 +63,18 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
           {lotName} / <span className="text-amber-400">{spot.label}</span>
         </div>
 
-        {isLoading && <p className="mt-4 text-sm text-zinc-400">Loading...</p>}
+        {isLoading && <p className="mt-4 text-sm text-zinc-400">טוען...</p>}
 
         {car && !editing && (
           <div className="mt-2 flex flex-col gap-2">
             <h3 className="text-xl font-semibold text-zinc-100 font-mono tracking-wide">{car.chassisNumber}</h3>
             <p className="text-zinc-200">{car.clientName}</p>
-            <p className="text-sm text-zinc-400">License plate: {car.licensePlateNumber}</p>
-            <p className="text-sm text-zinc-400">Car type: {car.carType}</p>
-            {car.deliveryDate && <p className="text-sm text-zinc-400">Delivery date: {car.deliveryDate}</p>}
+            <p className="text-sm text-zinc-400">מספר רישוי: {car.licensePlateNumber}</p>
+            <p className="text-sm text-zinc-400">סוג רכב: {car.carType}</p>
+            {car.deliveryDate && <p className="text-sm text-zinc-400">תאריך אספקה: {car.deliveryDate}</p>}
             {car.currentLocation && (
               <p className="text-xs text-zinc-500">
-                Parked since {new Date(car.currentLocation.assignedAt).toLocaleString()}
+                בחניה מאז {new Date(car.currentLocation.assignedAt).toLocaleString('he-IL')}
               </p>
             )}
           </div>
@@ -97,10 +97,10 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
 
             <div className="mt-2 flex justify-end gap-2">
               <button type="button" className="btn-secondary" onClick={() => setEditing(false)}>
-                Cancel
+                ביטול
               </button>
               <button type="submit" className="btn-primary" disabled={updateCar.isPending}>
-                Save
+                שמירה
               </button>
             </div>
           </form>
@@ -109,22 +109,22 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
         {car && !editing && !confirmingRemove && (
           <div className="mt-6 flex justify-end gap-2">
             <button type="button" className="btn-secondary" onClick={onClose}>
-              Close
+              סגירה
             </button>
             <button type="button" className="btn-secondary" onClick={startEditing}>
-              Edit
+              עריכה
             </button>
             <button type="button" className="btn-danger" onClick={() => setConfirmingRemove(true)}>
-              Remove car
+              הסרת רכב
             </button>
           </div>
         )}
 
         {confirmingRemove && (
           <div className="mt-6 flex justify-end gap-2">
-            <span className="text-sm text-zinc-400 mr-auto self-center">Are you sure?</span>
+            <span className="text-sm text-zinc-400 me-auto self-center">בטוחים?</span>
             <button type="button" className="btn-secondary" onClick={() => setConfirmingRemove(false)}>
-              Cancel
+              ביטול
             </button>
             <button
               type="button"
@@ -132,7 +132,7 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
               disabled={removeCar.isPending}
               onClick={() => removeCar.mutate(spot.id, { onSuccess: onClose })}
             >
-              Confirm remove
+              אישור הסרה
             </button>
           </div>
         )}

@@ -3,7 +3,7 @@ import type { GridPayload, GridRowSpec } from '../types';
 
 interface GridInputProps {
   onChange: (grid: GridPayload | null) => void;
-  // Row labels the lot already has, e.g. from LotEditor's "Generate spots"
+  // Row labels the lot already has, e.g. from LotEditor's "יצירת מקומות חניה"
   // form. Omitted/empty for a brand-new lot, which has no rows to extend yet.
   existingRowLabels?: string[];
 }
@@ -60,10 +60,10 @@ export function GridInput({ onChange, existingRowLabels = [] }: GridInputProps) 
               className="flex items-center justify-between text-sm bg-zinc-900 border border-zinc-800 rounded-md px-2 py-1 text-zinc-300"
             >
               <span>
-                {existingRowLabels.includes(row.label) ? 'Add to row' : 'New row'} {row.label} — +{row.count} spots
+                {existingRowLabels.includes(row.label) ? 'הוספה לשורה' : 'שורה חדשה'} {row.label} — {row.count}+ מקומות
               </span>
               <button type="button" onClick={() => removeRow(i)} className="text-rose-400 hover:underline">
-                Remove
+                הסרה
               </button>
             </li>
           ))}
@@ -74,11 +74,11 @@ export function GridInput({ onChange, existingRowLabels = [] }: GridInputProps) 
         <div className="flex gap-4 text-sm text-zinc-300">
           <label className="flex items-center gap-1.5">
             <input type="radio" checked={mode === 'new'} onChange={() => setMode('new')} className="accent-amber-500" />
-            New row
+            שורה חדשה
           </label>
           <label className="flex items-center gap-1.5">
             <input type="radio" checked={mode === 'existing'} onChange={() => setMode('existing')} className="accent-amber-500" />
-            Add to existing row
+            הוספה לשורה קיימת
           </label>
         </div>
       )}
@@ -86,7 +86,7 @@ export function GridInput({ onChange, existingRowLabels = [] }: GridInputProps) 
       <div className="flex items-end gap-2">
         {showingExistingRowMode ? (
           <label className="text-sm flex-1 text-zinc-300">
-            Row
+            שורה
             <select
               className="input-field mt-1"
               value={selectedExistingRow}
@@ -101,14 +101,14 @@ export function GridInput({ onChange, existingRowLabels = [] }: GridInputProps) 
           </label>
         ) : (
           <div className="text-sm flex-1 text-zinc-300">
-            Row
+            שורה
             <div className="mt-1 border border-zinc-700 rounded-md px-2 py-1.5 bg-zinc-900 text-zinc-400">
               {suggestedLabel || '—'}
             </div>
           </div>
         )}
         <label className="text-sm flex-1 text-zinc-300">
-          Number of spots
+          מספר מקומות
           <input
             type="number"
             min={1}
@@ -120,7 +120,7 @@ export function GridInput({ onChange, existingRowLabels = [] }: GridInputProps) 
           />
         </label>
         <button type="button" onClick={addRow} className="btn-secondary">
-          Add
+          הוספה
         </button>
       </div>
     </div>

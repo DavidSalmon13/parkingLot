@@ -22,7 +22,7 @@ export function CarFieldsInputs({
   return (
     <>
       <label className="text-sm text-zinc-300">
-        License plate number
+        מספר רישוי
         <input
           className="input-field mt-1"
           value={licensePlateNumber}
@@ -31,7 +31,7 @@ export function CarFieldsInputs({
         />
       </label>
       <label className="text-sm text-zinc-300">
-        Car type
+        סוג רכב
         <input
           className="input-field mt-1"
           value={carType}
@@ -40,7 +40,7 @@ export function CarFieldsInputs({
         />
       </label>
       <label className="text-sm text-zinc-300">
-        Client name
+        שם הלקוח
         <input
           className="input-field mt-1"
           value={clientName}
@@ -49,7 +49,7 @@ export function CarFieldsInputs({
         />
       </label>
       <label className="text-sm text-zinc-300">
-        Delivery date (optional)
+        תאריך אספקה (אופציונלי)
         <input
           type="date"
           className="input-field mt-1 [color-scheme:dark]"
