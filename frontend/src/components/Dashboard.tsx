@@ -19,9 +19,9 @@ export function Dashboard() {
   };
 
   return (
-    <div className="p-6 flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Parking Lot Manager</h1>
+    <div className="p-3 sm:p-6 flex flex-col gap-4 sm:gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl sm:text-3xl font-bold">Parking Lot Manager</h1>
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 text-xs text-gray-500" title={wsConnected ? 'Live updates connected' : 'Reconnecting — falling back to periodic refresh'}>
             <span className={`h-2 w-2 rounded-full ${wsConnected ? 'bg-green-500' : 'bg-gray-400'}`} />
@@ -37,7 +37,7 @@ export function Dashboard() {
       {isLoading && <p className="text-gray-500">Loading lots...</p>}
       {isError && <p className="text-red-600">Failed to load lots.</p>}
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4 sm:gap-6">
         {lots.map((lot) => (
           <LotCard key={lot.id} lot={lot} onSelectSpot={handleSelectSpot(lot.name)} />
         ))}

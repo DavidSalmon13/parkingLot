@@ -25,7 +25,7 @@ export function SpotCell({ spot, lotName, onSelect }: SpotCellProps) {
     <div
       id={`spot-${spot.id}`}
       className={[
-        'relative border-2 rounded p-2 flex flex-col items-center cursor-pointer transition-colors',
+        'relative border-2 rounded p-1 sm:p-2 flex flex-col items-center justify-center cursor-pointer transition-colors overflow-hidden',
         spot.status === 'occupied' ? 'bg-red-100 border-red-500' : 'bg-green-100 border-green-500',
         isHighlighted ? 'ring-4 ring-yellow-400 animate-pulse' : '',
       ].join(' ')}
@@ -34,8 +34,10 @@ export function SpotCell({ spot, lotName, onSelect }: SpotCellProps) {
       onMouseLeave={() => setHovered(false)}
     >
       {hovered && <SpotTooltip lotName={lotName} spotLabel={spot.label} />}
-      <span className="font-semibold">{spot.label}</span>
-      {spot.status === 'occupied' && spot.car && <span className="text-sm text-gray-700">{spot.car.id}</span>}
+      <span className="font-semibold text-xs sm:text-sm truncate max-w-full">{spot.label}</span>
+      {spot.status === 'occupied' && spot.car && (
+        <span className="text-[10px] sm:text-sm text-gray-700 truncate max-w-full">{spot.car.id}</span>
+      )}
     </div>
   );
 }

@@ -9,7 +9,7 @@ interface LotCardProps {
 
 export function LotCard({ lot, onSelectSpot }: LotCardProps) {
   return (
-    <div className="border rounded-lg p-4 flex flex-col gap-3">
+    <div className="border rounded-lg p-2.5 sm:p-4 flex flex-col gap-2 sm:gap-3">
       <LotHeader lot={lot} />
       <SpotGrid spots={lot.spots} lotName={lot.name} onSelectSpot={onSelectSpot} />
     </div>
