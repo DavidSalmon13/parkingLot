@@ -1,5 +1,9 @@
 import { client } from './client';
-import type { CarDetail, UpdateCarPayload } from '../types';
+import type { CarDetail, CreateCarPayload, UpdateCarPayload } from '../types';
+
+export function createCar(payload: CreateCarPayload): Promise<CarDetail> {
+  return client.post<CarDetail>('/cars', payload).then((res) => res.data);
+}
 
 export function fetchCarDetail(carId: string): Promise<CarDetail> {
   return client.get<CarDetail>(`/cars/${carId}`).then((res) => res.data);

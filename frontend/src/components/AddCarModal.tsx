@@ -56,7 +56,7 @@ export function AddCarModal({ spot, onClose }: AddCarModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-20" onClick={onClose}>
-      <div className="surface-modal p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+      <div className="surface-modal p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <h3 className="text-lg font-semibold mb-4 text-zinc-100">
           הוספת רכב למקום <span className="text-amber-400">{spot.label}</span>
         </h3>

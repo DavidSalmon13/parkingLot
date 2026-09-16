@@ -57,6 +57,10 @@ export interface UpdateCarPayload {
   deliveryDate?: string;
 }
 
+export interface CreateCarPayload extends UpdateCarPayload {
+  chassisNumber: string;
+}
+
 // Mirrors the WebSocket message envelope from spec §6.3.
 export interface SpotUpdateEvent {
   type: 'SPOT_UPDATED' | 'SPOT_CREATED';

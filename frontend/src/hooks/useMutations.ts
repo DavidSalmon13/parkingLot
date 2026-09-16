@@ -3,10 +3,11 @@ import { ApiError } from '../api/client';
 import { assignCar, removeCar } from '../api/spots';
 import { addSpot, deleteSpot, updateSpot } from '../api/spots';
 import { createLot, deleteLot, generateSpots, renameLot } from '../api/lots';
-import { deleteCar, updateCar } from '../api/cars';
+import { createCar, deleteCar, updateCar } from '../api/cars';
 import type {
   AssignCarPayload,
   CarDetail,
+  CreateCarPayload,
   CreateLotPayload,
   CreateSpotPayload,
   GridPayload,
@@ -38,6 +39,17 @@ export function useAssignCar() {
 export function useRemoveCar() {
   return useMutation({
     mutationFn: (spotId: string) => removeCar(spotId),
+  });
+}
+
+export function useCreateCar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateCarPayload) => createCar(payload),
+    onSuccess: (created) => {
+      queryClient.setQueryData(['car', created.chassisNumber], created);
+      queryClient.setQueryData<CarDetail[]>(['cars', 'unassigned'], (old) => (old ? [created, ...old] : old));
+    },
   });
 }
 

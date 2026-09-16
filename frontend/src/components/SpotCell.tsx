@@ -38,7 +38,7 @@ export function SpotCell({ spot, lotName, onSelect }: SpotCellProps) {
 
       <div
         className={[
-          'relative w-full aspect-square rounded-lg border-2 flex flex-col items-center justify-center overflow-hidden p-0.5 transition-all',
+          'relative w-full aspect-square rounded-lg border-2 flex flex-col items-center justify-center overflow-hidden p-0.5 transition-all @container',
           occupied
             ? 'bg-zinc-900 border-rose-600/70 shadow-[0_0_10px_-2px_theme(colors.rose.700)]'
             : 'bg-zinc-900/60 border-dashed border-zinc-700 hover:border-amber-500/60',
@@ -49,7 +49,8 @@ export function SpotCell({ spot, lotName, onSelect }: SpotCellProps) {
           <>
             <span className="text-2xl sm:text-4xl leading-none">🚗</span>
             <span
-              className="mt-1 w-full px-1 rounded bg-zinc-950 border border-amber-500/40 text-amber-400 text-[11px] sm:text-sm font-mono font-bold leading-tight tracking-tight text-center truncate"
+              className="mt-1 w-full px-0.5 rounded bg-zinc-950 border border-amber-500/40 text-amber-400 font-bold leading-tight tabular-nums tracking-tight text-center truncate"
+              style={{ fontSize: 'clamp(8px, 18cqw, 15px)' }}
               title={spot.car.licensePlateNumber}
             >
               {spot.car.licensePlateNumber}
