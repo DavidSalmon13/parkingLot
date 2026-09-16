@@ -47,7 +47,7 @@ export function SpotCell({ spot, lotName, onSelect }: SpotCellProps) {
       >
         {occupied && spot.car && (
           <>
-            <span className="text-lg sm:text-2xl leading-none">🚗</span>
+            <span className="text-2xl sm:text-4xl leading-none">🚗</span>
             <span
               className="mt-1 w-full px-1 rounded bg-zinc-950 border border-amber-500/40 text-amber-400 text-[11px] sm:text-sm font-mono font-bold leading-tight tracking-tight text-center truncate"
               title={spot.car.licensePlateNumber}
