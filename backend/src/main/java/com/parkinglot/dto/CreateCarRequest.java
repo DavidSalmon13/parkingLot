@@ -9,7 +9,7 @@ public record CreateCarRequest(
     @NotBlank(message = "חובה למלא") @Size(max = 50, message = "עד 50 תווים") String chassisNumber,
     @NotBlank(message = "חובה למלא") @Size(max = 20, message = "עד 20 תווים") String licensePlateNumber,
     @NotBlank(message = "חובה למלא") @Size(max = 50, message = "עד 50 תווים") String carType,
-    @NotBlank(message = "חובה למלא") @Size(max = 100, message = "עד 100 תווים") String clientName,
+    @Size(max = 100, message = "עד 100 תווים") String clientName,
     LocalDate deliveryDate
 ) {
 }

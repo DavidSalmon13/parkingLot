@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchUnassignedCars } from '../api/cars';
-import { useUpdateCar } from '../hooks/useMutations';
+import { useDeleteCar, useUpdateCar } from '../hooks/useMutations';
 import { ApiError } from '../api/client';
 import { CarFieldsInputs } from './CarFieldsInputs';
 import type { CarDetail } from '../types';
@@ -62,15 +62,17 @@ interface UnassignedCarRowProps {
 function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedCarRowProps) {
   const [licensePlateNumber, setLicensePlateNumber] = useState(car.licensePlateNumber);
   const [carType, setCarType] = useState(car.carType);
-  const [clientName, setClientName] = useState(car.clientName);
+  const [clientName, setClientName] = useState(car.clientName ?? '');
   const [deliveryDate, setDeliveryDate] = useState(car.deliveryDate ?? '');
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const updateCar = useUpdateCar();
+  const deleteCar = useDeleteCar();
 
   const startEdit = () => {
     updateCar.reset();
     setLicensePlateNumber(car.licensePlateNumber);
     setCarType(car.carType);
-    setClientName(car.clientName);
+    setClientName(car.clientName ?? '');
     setDeliveryDate(car.deliveryDate ?? '');
     onStartEdit();
   };
@@ -78,7 +80,15 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     updateCar.mutate(
-      { carId: car.chassisNumber, payload: { licensePlateNumber, carType, clientName, deliveryDate: deliveryDate || undefined } },
+      {
+        carId: car.chassisNumber,
+        payload: {
+          licensePlateNumber,
+          carType,
+          clientName: clientName || undefined,
+          deliveryDate: deliveryDate || undefined,
+        },
+      },
       { onSuccess: onStopEdit },
     );
   };
@@ -86,19 +96,51 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
   const error = updateCar.error;
   const errorMessage = error instanceof ApiError ? error.message : error ? 'משהו השתבש.' : null;
 
+  const deleteError = deleteCar.error;
+  const deleteErrorMessage = deleteError instanceof ApiError ? deleteError.message : deleteError ? 'משהו השתבש.' : null;
+
   if (!editing) {
     return (
       <div className="border border-zinc-800 bg-zinc-950/60 rounded-lg p-3 flex flex-col gap-1">
         <div className="flex items-center justify-between">
           <h4 className="font-semibold text-zinc-100 font-mono tracking-wide">{car.chassisNumber}</h4>
-          <button type="button" className="btn-secondary" onClick={startEdit}>
-            עריכה
-          </button>
+          <div className="flex gap-2">
+            <button type="button" className="btn-secondary" onClick={startEdit}>
+              עריכה
+            </button>
+            {!confirmingDelete ? (
+              <button
+                type="button"
+                className="btn-danger-outline"
+                onClick={() => {
+                  deleteCar.reset();
+                  setConfirmingDelete(true);
+                }}
+              >
+                מחיקה
+              </button>
+            ) : (
+              <>
+                <button type="button" className="btn-secondary" onClick={() => setConfirmingDelete(false)}>
+                  ביטול
+                </button>
+                <button
+                  type="button"
+                  className="btn-danger"
+                  disabled={deleteCar.isPending}
+                  onClick={() => deleteCar.mutate(car.chassisNumber, { onSuccess: () => setConfirmingDelete(false) })}
+                >
+                  אישור מחיקה
+                </button>
+              </>
+            )}
+          </div>
         </div>
-        <p className="text-sm text-zinc-200">{car.clientName}</p>
+        {car.clientName && <p className="text-sm text-zinc-200">{car.clientName}</p>}
         <p className="text-sm text-zinc-400">מספר רישוי: {car.licensePlateNumber}</p>
         <p className="text-sm text-zinc-400">סוג רכב: {car.carType}</p>
         {car.deliveryDate && <p className="text-sm text-zinc-400">תאריך אספקה: {car.deliveryDate}</p>}
+        {deleteErrorMessage && <p className="text-sm text-rose-400">{deleteErrorMessage}</p>}
       </div>
     );
   }

@@ -25,7 +25,7 @@ public class Car {
     @Column(name = "car_type", nullable = false, length = 50)
     private String carType;
 
-    @Column(name = "client_name", nullable = false, length = 100)
+    @Column(name = "client_name", length = 100)
     private String clientName;
 
     @Column(name = "delivery_date")

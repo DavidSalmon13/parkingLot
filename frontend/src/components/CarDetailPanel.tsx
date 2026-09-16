@@ -35,7 +35,7 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
     updateCar.reset();
     setLicensePlateNumber(car.licensePlateNumber);
     setCarType(car.carType);
-    setClientName(car.clientName);
+    setClientName(car.clientName ?? '');
     setDeliveryDate(car.deliveryDate ?? '');
     setEditing(true);
   };
@@ -44,7 +44,15 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
     e.preventDefault();
     if (!carId) return;
     updateCar.mutate(
-      { carId, payload: { licensePlateNumber, carType, clientName, deliveryDate: deliveryDate || undefined } },
+      {
+        carId,
+        payload: {
+          licensePlateNumber,
+          carType,
+          clientName: clientName || undefined,
+          deliveryDate: deliveryDate || undefined,
+        },
+      },
       { onSuccess: () => setEditing(false) },
     );
   };
@@ -68,7 +76,7 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
         {car && !editing && (
           <div className="mt-2 flex flex-col gap-2">
             <h3 className="text-xl font-semibold text-zinc-100 font-mono tracking-wide">{car.chassisNumber}</h3>
-            <p className="text-zinc-200">{car.clientName}</p>
+            {car.clientName && <p className="text-zinc-200">{car.clientName}</p>}
             <p className="text-sm text-zinc-400">מספר רישוי: {car.licensePlateNumber}</p>
             <p className="text-sm text-zinc-400">סוג רכב: {car.carType}</p>
             {car.deliveryDate && <p className="text-sm text-zinc-400">תאריך אספקה: {car.deliveryDate}</p>}

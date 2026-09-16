@@ -7,6 +7,7 @@ import com.parkinglot.service.CarService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,5 +46,11 @@ public class CarController {
     @PutMapping("/api/cars/{carId}")
     public CarDetailResponse updateCar(@PathVariable String carId, @Valid @RequestBody UpdateCarRequest req) {
         return carService.updateCar(carId, req);
+    }
+
+    @DeleteMapping("/api/cars/{carId}")
+    public ResponseEntity<Void> deleteCar(@PathVariable String carId) {
+        carService.deleteCar(carId);
+        return ResponseEntity.noContent().build();
     }
 }

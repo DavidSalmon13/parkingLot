@@ -12,3 +12,7 @@ export function fetchUnassignedCars(): Promise<CarDetail[]> {
 export function updateCar(carId: string, payload: UpdateCarPayload): Promise<CarDetail> {
   return client.put<CarDetail>(`/cars/${carId}`, payload).then((res) => res.data);
 }
+
+export function deleteCar(carId: string): Promise<void> {
+  return client.delete(`/cars/${carId}`).then(() => undefined);
+}

@@ -5,6 +5,7 @@ import com.parkinglot.dto.CreateCarRequest;
 import com.parkinglot.dto.UpdateCarRequest;
 import com.parkinglot.entity.Car;
 import com.parkinglot.entity.CarAssignment;
+import com.parkinglot.exception.CarCurrentlyParkedException;
 import com.parkinglot.exception.CarIdExistsException;
 import com.parkinglot.exception.CarNotFoundException;
 import com.parkinglot.repository.CarAssignmentRepository;
@@ -63,6 +64,15 @@ public class CarService {
         return carRepo.findAllUnassigned().stream()
             .map(car -> toDetailResponse(car, Optional.empty()))
             .toList();
+    }
+
+    @Transactional
+    public void deleteCar(String carId) {
+        Car car = getCarOrThrow(carId);
+        assignmentRepo.findByCar_ChassisNumberAndRemovedAtIsNull(carId).ifPresent(a -> {
+            throw new CarCurrentlyParkedException(a.getSpot().getLot().getName(), a.getSpot().getLabel());
+        });
+        carRepo.delete(car);
     }
 
     private CarDetailResponse toDetailResponse(Car car, Optional<CarAssignment> active) {

@@ -40,12 +40,11 @@ export function CarFieldsInputs({
         />
       </label>
       <label className="text-sm text-zinc-300">
-        שם הלקוח
+        שם הלקוח (אופציונלי)
         <input
           className="input-field mt-1"
           value={clientName}
           onChange={(e) => onClientNameChange(e.target.value)}
-          required
         />
       </label>
       <label className="text-sm text-zinc-300">

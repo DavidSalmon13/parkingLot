@@ -24,7 +24,7 @@ export interface CarDetail {
   chassisNumber: string;
   licensePlateNumber: string;
   carType: string;
-  clientName: string;
+  clientName: string | null;
   deliveryDate: string | null;
   currentLocation: { lotName: string; spotLabel: string; assignedAt: string } | null;
 }
@@ -41,7 +41,7 @@ export interface AssignmentResult {
 export interface NewCarDetails {
   licensePlateNumber: string;
   carType: string;
-  clientName: string;
+  clientName?: string;
   deliveryDate?: string;
 }
 
@@ -53,7 +53,7 @@ export interface AssignCarPayload {
 export interface UpdateCarPayload {
   licensePlateNumber: string;
   carType: string;
-  clientName: string;
+  clientName?: string;
   deliveryDate?: string;
 }
 
