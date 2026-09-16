@@ -17,8 +17,8 @@ export function SpotGrid({ spots, lotName, onSelectSpot }: SpotGridProps) {
   return (
     <div className="overflow-x-auto">
       <div
-        className="grid gap-1.5 sm:gap-2"
-        style={{ gridTemplateColumns: `repeat(${maxPosition}, minmax(4.5rem, 1fr))` }}
+        className="grid gap-1.5 sm:gap-2 justify-start"
+        style={{ gridTemplateColumns: `repeat(${maxPosition}, minmax(4.5rem, 6rem))` }}
       >
         {spots.map((spot) => (
           <SpotCell key={spot.id} spot={spot} lotName={lotName} onSelect={onSelectSpot} />

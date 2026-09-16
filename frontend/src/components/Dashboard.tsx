@@ -47,7 +47,7 @@ export function Dashboard() {
       {isLoading && <p className="text-zinc-400">טוען חניונים...</p>}
       {isError && <p className="text-rose-400">טעינת החניונים נכשלה.</p>}
 
-      <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 items-start">
         {lots.map((lot) => (
           <LotCard key={lot.id} lot={lot} onSelectSpot={handleSelectSpot(lot.name)} />
         ))}
