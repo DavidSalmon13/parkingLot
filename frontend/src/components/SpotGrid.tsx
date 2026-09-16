@@ -26,7 +26,7 @@ export function SpotGrid({ spots, lotName, onSelectSpot }: SpotGridProps) {
   }
 
   return (
-    <div className="flex flex-wrap gap-x-4 gap-y-2">
+    <div className="flex flex-col gap-2">
       {[...rows.entries()].map(([row, rowSpots]) => (
         <div key={row} className="flex flex-col gap-1 max-w-full">
           <span className="text-[10px] font-semibold text-zinc-500 tracking-wide">{row}</span>
