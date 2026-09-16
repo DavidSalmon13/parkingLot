@@ -21,9 +21,9 @@ export function SearchBar() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center gap-2">
+    <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-2 min-w-0">
       <input
-        className="input-field w-48 sm:w-56"
+        className="input-field w-40 sm:w-56"
         placeholder="חיפוש רכב לפי מספר שלדה..."
         value={term}
         onChange={(e) => {
