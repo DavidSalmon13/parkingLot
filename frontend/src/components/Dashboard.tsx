@@ -6,6 +6,7 @@ import { LotCard } from './LotCard';
 import { SearchBar } from './SearchBar';
 import { AddCarModal } from './AddCarModal';
 import { CarDetailPanel } from './CarDetailPanel';
+import { NewLotModal } from './NewLotModal';
 import { UnassignedCarsPanel } from './UnassignedCarsPanel';
 import type { Spot } from '../types';
 
@@ -28,6 +29,7 @@ export function Dashboard() {
   const wsConnected = useDashboardStore((s) => s.wsConnected);
   const [selected, setSelected] = useState<{ lotName: string; spot: Spot } | null>(null);
   const [showUnassigned, setShowUnassigned] = useState(false);
+  const [showNewLot, setShowNewLot] = useState(false);
   const [zoom, setZoom] = useState(readStoredZoom);
 
   useEffect(() => {
@@ -61,6 +63,9 @@ export function Dashboard() {
             {wsConnected ? 'פעיל' : 'מתחבר מחדש…'}
           </span>
           <SearchBar />
+          <button type="button" className="btn-primary text-sm px-2.5 py-1 whitespace-nowrap" onClick={() => setShowNewLot(true)}>
+            חניון חדש
+          </button>
           <button type="button" className="link-muted whitespace-nowrap" onClick={() => setShowUnassigned(true)}>
             רכבים לא משויכים
           </button>
@@ -110,6 +115,7 @@ export function Dashboard() {
         <CarDetailPanel lotName={selected.lotName} spot={selected.spot} onClose={() => setSelected(null)} />
       )}
       {showUnassigned && <UnassignedCarsPanel onClose={() => setShowUnassigned(false)} />}
+      {showNewLot && <NewLotModal onClose={() => setShowNewLot(false)} />}
     </div>
   );
 }
