@@ -68,4 +68,18 @@ public class ParkingLotController {
         ParkingLot lot = lotService.getLotOrThrow(id);
         return ResponseEntity.status(HttpStatus.CREATED).body(spotService.addSpot(lot, req));
     }
+
+    // Quick row controls (the +/- at the end of a row on the dashboard grid).
+    @PostMapping("/api/lots/{id}/rows/{row}/spots")
+    public ResponseEntity<SpotResponse> addSpotToRow(@PathVariable UUID id, @PathVariable String row) {
+        ParkingLot lot = lotService.getLotOrThrow(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(spotService.addSpotToRowEnd(lot, row));
+    }
+
+    @DeleteMapping("/api/lots/{id}/rows/{row}/spots")
+    public ResponseEntity<Void> removeLastAvailableSpotFromRow(@PathVariable UUID id, @PathVariable String row) {
+        ParkingLot lot = lotService.getLotOrThrow(id);
+        spotService.removeLastAvailableSpotFromRow(lot, row);
+        return ResponseEntity.noContent().build();
+    }
 }

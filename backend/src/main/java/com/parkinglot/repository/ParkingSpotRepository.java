@@ -15,6 +15,10 @@ public interface ParkingSpotRepository extends JpaRepository<ParkingSpot, UUID> 
 
     List<ParkingSpot> findByLotIdOrderByRowAscPositionAsc(UUID lotId);
 
+    // Backs the quick add/remove-at-row-end controls (§ row spot controls):
+    // ascending order so callers can scan from either end.
+    List<ParkingSpot> findByLotIdAndRowOrderByPositionAsc(UUID lotId, String row);
+
     // Lets grid generation append spots to a row that already has some,
     // instead of only ever being able to build a row from position 1 (spec §3.5).
     @Query("SELECT MAX(s.position) FROM ParkingSpot s WHERE s.lot.id = :lotId AND s.row = :row")

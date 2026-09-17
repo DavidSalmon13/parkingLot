@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ApiError } from '../api/client';
 import { assignCar, removeCar } from '../api/spots';
-import { addSpot, deleteSpot, updateSpot } from '../api/spots';
+import { addSpot, addSpotToRow, deleteSpot, removeSpotFromRow, updateSpot } from '../api/spots';
 import { createLot, deleteLot, generateSpots, renameLot } from '../api/lots';
 import { createCar, deleteCar, updateCar } from '../api/cars';
 import type {
@@ -117,5 +117,17 @@ export function useUpdateSpot() {
 export function useDeleteSpot() {
   return useMutation({
     mutationFn: (spotId: string) => deleteSpot(spotId),
+  });
+}
+
+export function useAddSpotToRow() {
+  return useMutation({
+    mutationFn: ({ lotId, row }: { lotId: string; row: string }) => addSpotToRow(lotId, row),
+  });
+}
+
+export function useRemoveSpotFromRow() {
+  return useMutation({
+    mutationFn: ({ lotId, row }: { lotId: string; row: string }) => removeSpotFromRow(lotId, row),
   });
 }

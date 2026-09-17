@@ -20,3 +20,11 @@ export function updateSpot(spotId: string, payload: UpdateSpotPayload): Promise<
 export function deleteSpot(spotId: string): Promise<void> {
   return client.delete(`/spots/${spotId}`).then(() => undefined);
 }
+
+export function addSpotToRow(lotId: string, row: string): Promise<Spot> {
+  return client.post<Spot>(`/lots/${lotId}/rows/${encodeURIComponent(row)}/spots`).then((res) => res.data);
+}
+
+export function removeSpotFromRow(lotId: string, row: string): Promise<void> {
+  return client.delete(`/lots/${lotId}/rows/${encodeURIComponent(row)}/spots`).then(() => undefined);
+}

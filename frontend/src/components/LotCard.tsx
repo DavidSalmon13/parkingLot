@@ -11,7 +11,7 @@ export function LotCard({ lot, onSelectSpot }: LotCardProps) {
   return (
     <div className="surface-card p-2.5 sm:p-4 flex flex-col gap-2 sm:gap-3">
       <LotHeader lot={lot} />
-      <SpotGrid spots={lot.spots} lotName={lot.name} onSelectSpot={onSelectSpot} />
+      <SpotGrid spots={lot.spots} lotId={lot.id} lotName={lot.name} onSelectSpot={onSelectSpot} />
     </div>
   );
 }

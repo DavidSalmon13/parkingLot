@@ -1,13 +1,15 @@
+import { RowSpotControls } from './RowSpotControls';
 import { SpotCell } from './SpotCell';
 import type { Spot } from '../types';
 
 interface SpotGridProps {
   spots: Spot[];
+  lotId: string;
   lotName: string;
   onSelectSpot: (spot: Spot) => void;
 }
 
-export function SpotGrid({ spots, lotName, onSelectSpot }: SpotGridProps) {
+export function SpotGrid({ spots, lotId, lotName, onSelectSpot }: SpotGridProps) {
   if (spots.length === 0) {
     return <p className="text-sm text-zinc-500">אין עדיין מקומות חניה.</p>;
   }
@@ -36,6 +38,11 @@ export function SpotGrid({ spots, lotName, onSelectSpot }: SpotGridProps) {
                 <SpotCell spot={spot} lotName={lotName} onSelect={onSelectSpot} />
               </div>
             ))}
+            <RowSpotControls
+              lotId={lotId}
+              row={row}
+              canRemove={rowSpots.some((s) => s.status === 'available')}
+            />
           </div>
         </div>
       ))}

@@ -9,6 +9,7 @@ import com.parkinglot.entity.CarAssignment;
 import com.parkinglot.entity.ParkingLot;
 import com.parkinglot.entity.ParkingSpot;
 import com.parkinglot.exception.NotFoundException;
+import com.parkinglot.exception.RowFullyOccupiedException;
 import com.parkinglot.exception.SpotLabelTakenException;
 import com.parkinglot.exception.SpotOccupiedException;
 import com.parkinglot.repository.CarAssignmentRepository;
@@ -20,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ParkingSpotService {
@@ -81,6 +84,74 @@ public class ParkingSpotService {
         SpotResponse dto = toDto(saved);
         lotUpdatePublisher.publishSpotCreated(lot.getId(), dto);
         return dto;
+    }
+
+    // Quick "+" control on a row: appends one spot right after the row's
+    // current highest position, same convention generateGrid/addSpot use.
+    @Transactional
+    public SpotResponse addSpotToRowEnd(ParkingLot lot, String row) {
+        int position = spotRepo.findMaxPositionByLotIdAndRow(lot.getId(), row)
+            .orElseThrow(() -> new NotFoundException("ROW_NOT_FOUND", "לא נמצאה שורה '" + row + "' בחניון זה.")) + 1;
+        String label = row + position;
+        if (spotRepo.existsByLotIdAndLabel(lot.getId(), label)) {
+            throw new SpotLabelTakenException(label);
+        }
+        ParkingSpot saved = spotRepo.save(new ParkingSpot(lot, label, row, position));
+        SpotResponse dto = toDto(saved);
+        lotUpdatePublisher.publishSpotCreated(lot.getId(), dto);
+        return dto;
+    }
+
+    // Quick "-" control on a row: removes the first available spot scanning
+    // from the row's end backwards (skipping occupied spots at the tail),
+    // then shifts every spot after the removed one down by one position so
+    // the row stays contiguous — e.g. removing empty A4 turns occupied A5
+    // into A4.
+    @Transactional
+    public void removeLastAvailableSpotFromRow(ParkingLot lot, String row) {
+        List<ParkingSpot> spots = spotRepo.findByLotIdAndRowOrderByPositionAsc(lot.getId(), row);
+        if (spots.isEmpty()) {
+            throw new NotFoundException("ROW_NOT_FOUND", "לא נמצאה שורה '" + row + "' בחניון זה.");
+        }
+
+        List<UUID> spotIds = spots.stream().map(ParkingSpot::getId).toList();
+        Set<UUID> occupiedSpotIds = assignmentRepo.findBySpotIdInAndRemovedAtIsNull(spotIds).stream()
+            .map(a -> a.getSpot().getId())
+            .collect(Collectors.toSet());
+
+        ParkingSpot target = null;
+        for (int i = spots.size() - 1; i >= 0; i--) {
+            if (!occupiedSpotIds.contains(spots.get(i).getId())) {
+                target = spots.get(i);
+                break;
+            }
+        }
+        if (target == null) {
+            throw new RowFullyOccupiedException(row);
+        }
+
+        UUID lotId = lot.getId();
+        int removedPosition = target.getPosition();
+        List<ParkingSpot> toShift = spots.stream().filter(s -> s.getPosition() > removedPosition).toList();
+
+        spotRepo.delete(target);
+        // Force the delete to hit the DB now — Hibernate's default flush
+        // ordering runs updates before deletes regardless of call order, which
+        // would otherwise try to rename e.g. B6 to the still-occupied B5 label
+        // and trip the (lot_id, label) unique constraint.
+        spotRepo.flush();
+        lotUpdatePublisher.publishSpotDeleted(lotId, target.getId());
+
+        // Processed lowest position first, each iteration flushed before the
+        // next: the label a spot is renamed to was just freed by the previous
+        // step (the delete above, or the prior iteration's rename), so no
+        // rename here can collide with a label that's still in use.
+        for (ParkingSpot spot : toShift) {
+            spot.setPosition(spot.getPosition() - 1);
+            spot.setLabel(row + spot.getPosition());
+            spotRepo.saveAndFlush(spot);
+            lotUpdatePublisher.publishSpotUpdated(lotId, toDto(spot));
+        }
     }
 
     @Transactional
