@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ApiError } from '../api/client';
 import { assignCar, removeCar } from '../api/spots';
 import { addSpot, addSpotToRow, deleteSpot, removeSpotFromRow, updateSpot } from '../api/spots';
-import { createLot, deleteLot, generateSpots, renameLot } from '../api/lots';
+import { addRow, createLot, deleteLot, generateSpots, removeLastRow, renameLot } from '../api/lots';
 import { createCar, deleteCar, updateCar } from '../api/cars';
 import type {
   AssignCarPayload,
@@ -99,6 +99,18 @@ export function useDeleteLot() {
 export function useGenerateSpots() {
   return useMutation({
     mutationFn: ({ lotId, payload }: { lotId: string; payload: GridPayload }) => generateSpots(lotId, payload),
+  });
+}
+
+export function useAddRow() {
+  return useMutation({
+    mutationFn: (lotId: string) => addRow(lotId),
+  });
+}
+
+export function useRemoveLastRow() {
+  return useMutation({
+    mutationFn: (lotId: string) => removeLastRow(lotId),
   });
 }
 

@@ -20,3 +20,11 @@ export function deleteLot(lotId: string): Promise<void> {
 export function generateSpots(lotId: string, payload: GridPayload): Promise<Spot[]> {
   return client.post<Spot[]>(`/lots/${lotId}/spots/generate`, payload).then((res) => res.data);
 }
+
+export function addRow(lotId: string): Promise<Spot> {
+  return client.post<Spot>(`/lots/${lotId}/rows`).then((res) => res.data);
+}
+
+export function removeLastRow(lotId: string): Promise<void> {
+  return client.delete(`/lots/${lotId}/rows/last`).then(() => undefined);
+}

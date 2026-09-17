@@ -82,4 +82,18 @@ public class ParkingLotController {
         spotService.removeLastAvailableSpotFromRow(lot, row);
         return ResponseEntity.noContent().build();
     }
+
+    // Quick lot controls (the +/- next to the lot name that add/remove a whole row).
+    @PostMapping("/api/lots/{id}/rows")
+    public ResponseEntity<SpotResponse> addRow(@PathVariable UUID id) {
+        ParkingLot lot = lotService.getLotOrThrow(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(spotService.addRowToLot(lot));
+    }
+
+    @DeleteMapping("/api/lots/{id}/rows/last")
+    public ResponseEntity<Void> removeLastRow(@PathVariable UUID id) {
+        ParkingLot lot = lotService.getLotOrThrow(id);
+        spotService.removeLastRowFromLot(lot);
+        return ResponseEntity.noContent().build();
+    }
 }

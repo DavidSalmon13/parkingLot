@@ -8,8 +8,10 @@ import com.parkinglot.dto.UpdateSpotRequest;
 import com.parkinglot.entity.CarAssignment;
 import com.parkinglot.entity.ParkingLot;
 import com.parkinglot.entity.ParkingSpot;
+import com.parkinglot.exception.NoRowLabelAvailableException;
 import com.parkinglot.exception.NotFoundException;
 import com.parkinglot.exception.RowFullyOccupiedException;
+import com.parkinglot.exception.RowHasOccupiedSpotsException;
 import com.parkinglot.exception.SpotLabelTakenException;
 import com.parkinglot.exception.SpotOccupiedException;
 import com.parkinglot.repository.CarAssignmentRepository;
@@ -152,6 +154,62 @@ public class ParkingSpotService {
             spotRepo.saveAndFlush(spot);
             lotUpdatePublisher.publishSpotUpdated(lotId, toDto(spot));
         }
+    }
+
+    // Quick "+" control on a lot: appends a brand-new row with a single spot
+    // right after it, labelled with the next unused letter — same suggestion
+    // logic as GridInput's row builder on the frontend.
+    @Transactional
+    public SpotResponse addRowToLot(ParkingLot lot) {
+        List<String> existingRows = spotRepo.findByLotIdOrderByRowAscPositionAsc(lot.getId()).stream()
+            .map(ParkingSpot::getRow)
+            .distinct()
+            .toList();
+        String row = nextRowLabel(existingRows);
+        String label = row + 1;
+        if (spotRepo.existsByLotIdAndLabel(lot.getId(), label)) {
+            throw new SpotLabelTakenException(label);
+        }
+        ParkingSpot saved = spotRepo.save(new ParkingSpot(lot, label, row, 1));
+        SpotResponse dto = toDto(saved);
+        lotUpdatePublisher.publishSpotCreated(lot.getId(), dto);
+        return dto;
+    }
+
+    private String nextRowLabel(List<String> existingRows) {
+        Set<String> used = existingRows.stream().map(String::toUpperCase).collect(Collectors.toSet());
+        for (int i = 0; i < 26; i++) {
+            String letter = String.valueOf((char) ('A' + i));
+            if (!used.contains(letter)) {
+                return letter;
+            }
+        }
+        throw new NoRowLabelAvailableException();
+    }
+
+    // Quick "-" control on a lot: removes the row with the alphabetically
+    // last label (the mirror image of addRowToLot's next-letter pick) — but
+    // only if none of its spots are occupied.
+    @Transactional
+    public void removeLastRowFromLot(ParkingLot lot) {
+        List<ParkingSpot> allSpots = spotRepo.findByLotIdOrderByRowAscPositionAsc(lot.getId());
+        if (allSpots.isEmpty()) {
+            throw new NotFoundException("LOT_HAS_NO_ROWS", "אין שורות למחיקה בחניון זה.");
+        }
+
+        String lastRow = allSpots.stream().map(ParkingSpot::getRow).max(String::compareTo).orElseThrow();
+        List<ParkingSpot> rowSpots = allSpots.stream().filter(s -> s.getRow().equals(lastRow)).toList();
+
+        List<UUID> spotIds = rowSpots.stream().map(ParkingSpot::getId).toList();
+        List<CarAssignment> occupied = assignmentRepo.findBySpotIdInAndRemovedAtIsNull(spotIds);
+        if (!occupied.isEmpty()) {
+            List<String> labels = occupied.stream().map(a -> a.getSpot().getLabel()).toList();
+            throw new RowHasOccupiedSpotsException(lastRow, labels);
+        }
+
+        UUID lotId = lot.getId();
+        spotRepo.deleteAll(rowSpots);
+        rowSpots.forEach(spot -> lotUpdatePublisher.publishSpotDeleted(lotId, spot.getId()));
     }
 
     @Transactional
