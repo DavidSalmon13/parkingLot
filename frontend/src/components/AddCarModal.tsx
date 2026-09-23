@@ -39,7 +39,7 @@ export function AddCarModal({ spot, onClose }: AddCarModalProps) {
             : {
                 carId,
                 newCar: {
-                  licensePlateNumber,
+                  licensePlateNumber: licensePlateNumber || undefined,
                   carType,
                   clientName: clientName || undefined,
                   deliveryDate: deliveryDate || undefined,

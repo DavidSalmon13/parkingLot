@@ -22,12 +22,11 @@ export function CarFieldsInputs({
   return (
     <>
       <label className="text-sm text-zinc-300">
-        מספר רישוי
+        מספר רישוי (אופציונלי)
         <input
           className="input-field mt-1"
           value={licensePlateNumber}
           onChange={(e) => onLicensePlateNumberChange(e.target.value)}
-          required
         />
       </label>
       <label className="text-sm text-zinc-300">

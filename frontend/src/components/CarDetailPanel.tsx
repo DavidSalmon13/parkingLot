@@ -33,7 +33,7 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
   const startEditing = () => {
     if (!car) return;
     updateCar.reset();
-    setLicensePlateNumber(car.licensePlateNumber);
+    setLicensePlateNumber(car.licensePlateNumber ?? '');
     setCarType(car.carType);
     setClientName(car.clientName ?? '');
     setDeliveryDate(car.deliveryDate ?? '');
@@ -47,7 +47,7 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
       {
         carId,
         payload: {
-          licensePlateNumber,
+          licensePlateNumber: licensePlateNumber || undefined,
           carType,
           clientName: clientName || undefined,
           deliveryDate: deliveryDate || undefined,
@@ -77,7 +77,7 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
           <div className="mt-2 flex flex-col gap-2">
             <h3 className="text-xl font-semibold text-zinc-100 font-mono tracking-wide">{car.chassisNumber}</h3>
             {car.clientName && <p className="text-zinc-200">{car.clientName}</p>}
-            <p className="text-sm text-zinc-400">מספר רישוי: {car.licensePlateNumber}</p>
+            {car.licensePlateNumber && <p className="text-sm text-zinc-400">מספר רישוי: {car.licensePlateNumber}</p>}
             <p className="text-sm text-zinc-400">סוג רכב: {car.carType}</p>
             {car.deliveryDate && <p className="text-sm text-zinc-400">תאריך אספקה: {car.deliveryDate}</p>}
             {car.currentLocation && (

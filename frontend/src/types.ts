@@ -1,6 +1,6 @@
 export interface CarSummary {
   chassisNumber: string;
-  licensePlateNumber: string;
+  licensePlateNumber: string | null;
   carType: string;
 }
 
@@ -22,7 +22,7 @@ export interface Lot {
 
 export interface CarDetail {
   chassisNumber: string;
-  licensePlateNumber: string;
+  licensePlateNumber: string | null;
   carType: string;
   clientName: string | null;
   deliveryDate: string | null;
@@ -39,7 +39,7 @@ export interface AssignmentResult {
 }
 
 export interface NewCarDetails {
-  licensePlateNumber: string;
+  licensePlateNumber?: string;
   carType: string;
   clientName?: string;
   deliveryDate?: string;
@@ -51,7 +51,7 @@ export interface AssignCarPayload {
 }
 
 export interface UpdateCarPayload {
-  licensePlateNumber: string;
+  licensePlateNumber?: string;
   carType: string;
   clientName?: string;
   deliveryDate?: string;

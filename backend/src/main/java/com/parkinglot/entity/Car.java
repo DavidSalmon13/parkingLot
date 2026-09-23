@@ -19,7 +19,7 @@ public class Car {
     @Column(name = "chassis_number", length = 50)
     private String chassisNumber;
 
-    @Column(name = "license_plate_number", nullable = false, length = 20)
+    @Column(name = "license_plate_number", length = 20)
     private String licensePlateNumber;
 
     @Column(name = "car_type", nullable = false, length = 50)

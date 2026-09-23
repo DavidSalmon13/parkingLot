@@ -83,7 +83,7 @@ function NewCarForm({ onDone, onCancel }: NewCarFormProps) {
     createCar.mutate(
       {
         chassisNumber,
-        licensePlateNumber,
+        licensePlateNumber: licensePlateNumber || undefined,
         carType,
         clientName: clientName || undefined,
         deliveryDate: deliveryDate || undefined,
@@ -145,7 +145,7 @@ interface UnassignedCarRowProps {
 }
 
 function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedCarRowProps) {
-  const [licensePlateNumber, setLicensePlateNumber] = useState(car.licensePlateNumber);
+  const [licensePlateNumber, setLicensePlateNumber] = useState(car.licensePlateNumber ?? '');
   const [carType, setCarType] = useState(car.carType);
   const [clientName, setClientName] = useState(car.clientName ?? '');
   const [deliveryDate, setDeliveryDate] = useState(car.deliveryDate ?? '');
@@ -155,7 +155,7 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
 
   const startEdit = () => {
     updateCar.reset();
-    setLicensePlateNumber(car.licensePlateNumber);
+    setLicensePlateNumber(car.licensePlateNumber ?? '');
     setCarType(car.carType);
     setClientName(car.clientName ?? '');
     setDeliveryDate(car.deliveryDate ?? '');
@@ -168,7 +168,7 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
       {
         carId: car.chassisNumber,
         payload: {
-          licensePlateNumber,
+          licensePlateNumber: licensePlateNumber || undefined,
           carType,
           clientName: clientName || undefined,
           deliveryDate: deliveryDate || undefined,
@@ -222,7 +222,7 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
           </div>
         </div>
         {car.clientName && <p className="text-sm text-zinc-200">{car.clientName}</p>}
-        <p className="text-sm text-zinc-400">מספר רישוי: {car.licensePlateNumber}</p>
+        {car.licensePlateNumber && <p className="text-sm text-zinc-400">מספר רישוי: {car.licensePlateNumber}</p>}
         <p className="text-sm text-zinc-400">סוג רכב: {car.carType}</p>
         {car.deliveryDate && <p className="text-sm text-zinc-400">תאריך אספקה: {car.deliveryDate}</p>}
         {deleteErrorMessage && <p className="text-sm text-rose-400">{deleteErrorMessage}</p>}
