@@ -1,6 +1,6 @@
 export const DEFAULT_CAR_EMOJI = '🚗';
 
-const CAR_EMOJIS = ['🚗', '🚙', '🚕', '🚓', '🏎️', '🛻', '🚐', '🚚', '🚌', '🚑', '🚒', '🏍️'];
+const CAR_EMOJIS = ['🚗', '🚘', '🚙', '🛻', '🚐', '🏎️', '🚚', '🏍️', '🛵'];
 
 interface CarFieldsInputsProps {
   emoji: string;
