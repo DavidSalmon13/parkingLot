@@ -47,7 +47,7 @@ export function SpotCell({ spot, lotName, onSelect }: SpotCellProps) {
       >
         {occupied && spot.car && (
           <>
-            <span className="text-2xl sm:text-4xl leading-none">🚗</span>
+            <span className="text-2xl sm:text-4xl leading-none">{spot.car.emoji || '🚗'}</span>
             <span
               className="mt-1 w-full rounded bg-zinc-950 border border-amber-500/40 text-amber-400 font-bold leading-[1.15] tabular-nums tracking-tight text-center break-all"
               style={{ fontSize: 'clamp(8px, 17cqw, 14px)' }}

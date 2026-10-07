@@ -14,6 +14,8 @@ import java.time.LocalDate;
 @Table(name = "cars")
 public class Car {
 
+    public static final String DEFAULT_EMOJI = "🚗";
+
     // User-supplied identifier — no @GeneratedValue.
     @Id
     @Column(name = "chassis_number", length = 50)
@@ -31,6 +33,9 @@ public class Car {
     @Column(name = "delivery_date")
     private LocalDate deliveryDate;
 
+    @Column(name = "emoji", nullable = false, length = 16)
+    private String emoji = DEFAULT_EMOJI;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
@@ -42,12 +47,14 @@ public class Car {
     protected Car() {
     }
 
-    public Car(String chassisNumber, String licensePlateNumber, String carType, String clientName, LocalDate deliveryDate) {
+    public Car(String chassisNumber, String licensePlateNumber, String carType, String clientName, LocalDate deliveryDate,
+               String emoji) {
         this.chassisNumber = chassisNumber;
         this.licensePlateNumber = licensePlateNumber;
         this.carType = carType;
         this.clientName = clientName;
         this.deliveryDate = deliveryDate;
+        setEmoji(emoji);
     }
 
     public String getChassisNumber() {
@@ -84,6 +91,15 @@ public class Car {
 
     public void setDeliveryDate(LocalDate deliveryDate) {
         this.deliveryDate = deliveryDate;
+    }
+
+    public String getEmoji() {
+        return emoji;
+    }
+
+    // A missing or blank emoji falls back to the default car.
+    public void setEmoji(String emoji) {
+        this.emoji = emoji == null || emoji.isBlank() ? DEFAULT_EMOJI : emoji.strip();
     }
 
     public Instant getCreatedAt() {

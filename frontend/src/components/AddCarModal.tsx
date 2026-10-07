@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ApiError } from '../api/client';
 import { useAssignCar } from '../hooks/useMutations';
-import { CarFieldsInputs } from './CarFieldsInputs';
+import { CarFieldsInputs, DEFAULT_CAR_EMOJI } from './CarFieldsInputs';
 import type { Spot } from '../types';
 
 interface AddCarModalProps {
@@ -21,6 +21,7 @@ const ERROR_COPY: Record<string, string> = {
 export function AddCarModal({ spot, onClose }: AddCarModalProps) {
   const [tab, setTab] = useState<Tab>('existing');
   const [carId, setCarId] = useState('');
+  const [emoji, setEmoji] = useState(DEFAULT_CAR_EMOJI);
   const [licensePlateNumber, setLicensePlateNumber] = useState('');
   const [carType, setCarType] = useState('');
   const [clientName, setClientName] = useState('');
@@ -41,6 +42,7 @@ export function AddCarModal({ spot, onClose }: AddCarModalProps) {
                 newCar: {
                   licensePlateNumber: licensePlateNumber || undefined,
                   carType,
+                  emoji,
                   clientName: clientName || undefined,
                   deliveryDate: deliveryDate || undefined,
                 },
@@ -92,10 +94,12 @@ export function AddCarModal({ spot, onClose }: AddCarModalProps) {
 
           {tab === 'new' && (
             <CarFieldsInputs
+              emoji={emoji}
               licensePlateNumber={licensePlateNumber}
               carType={carType}
               clientName={clientName}
               deliveryDate={deliveryDate}
+              onEmojiChange={setEmoji}
               onLicensePlateNumberChange={setLicensePlateNumber}
               onCarTypeChange={setCarType}
               onClientNameChange={setClientName}

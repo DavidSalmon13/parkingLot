@@ -47,7 +47,8 @@ public class AssignmentService {
                 throw new CarIdExistsException(req.carId());
             }
             car = carRepo.save(new Car(req.carId(), req.newCar().licensePlateNumber(), req.newCar().carType(),
-                req.newCar().clientName(), req.newCar().deliveryDate()));
+                req.newCar().clientName(), req.newCar().deliveryDate(),
+                req.newCar().emoji()));
         } else {
             car = existing.orElseThrow(() -> new CarNotFoundException(req.carId()));
         }

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchUnassignedCars } from '../api/cars';
 import { useCreateCar, useDeleteCar, useUpdateCar } from '../hooks/useMutations';
 import { ApiError } from '../api/client';
-import { CarFieldsInputs } from './CarFieldsInputs';
+import { CarFieldsInputs, DEFAULT_CAR_EMOJI } from './CarFieldsInputs';
 import type { CarDetail } from '../types';
 
 interface UnassignedCarsPanelProps {
@@ -72,6 +72,7 @@ interface NewCarFormProps {
 
 function NewCarForm({ onDone, onCancel }: NewCarFormProps) {
   const [chassisNumber, setChassisNumber] = useState('');
+  const [emoji, setEmoji] = useState(DEFAULT_CAR_EMOJI);
   const [licensePlateNumber, setLicensePlateNumber] = useState('');
   const [carType, setCarType] = useState('');
   const [clientName, setClientName] = useState('');
@@ -85,6 +86,7 @@ function NewCarForm({ onDone, onCancel }: NewCarFormProps) {
         chassisNumber,
         licensePlateNumber: licensePlateNumber || undefined,
         carType,
+        emoji,
         clientName: clientName || undefined,
         deliveryDate: deliveryDate || undefined,
       },
@@ -113,10 +115,12 @@ function NewCarForm({ onDone, onCancel }: NewCarFormProps) {
         />
       </label>
       <CarFieldsInputs
+        emoji={emoji}
         licensePlateNumber={licensePlateNumber}
         carType={carType}
         clientName={clientName}
         deliveryDate={deliveryDate}
+        onEmojiChange={setEmoji}
         onLicensePlateNumberChange={setLicensePlateNumber}
         onCarTypeChange={setCarType}
         onClientNameChange={setClientName}
@@ -145,6 +149,7 @@ interface UnassignedCarRowProps {
 }
 
 function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedCarRowProps) {
+  const [emoji, setEmoji] = useState(car.emoji);
   const [licensePlateNumber, setLicensePlateNumber] = useState(car.licensePlateNumber ?? '');
   const [carType, setCarType] = useState(car.carType);
   const [clientName, setClientName] = useState(car.clientName ?? '');
@@ -155,6 +160,7 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
 
   const startEdit = () => {
     updateCar.reset();
+    setEmoji(car.emoji);
     setLicensePlateNumber(car.licensePlateNumber ?? '');
     setCarType(car.carType);
     setClientName(car.clientName ?? '');
@@ -170,6 +176,7 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
         payload: {
           licensePlateNumber: licensePlateNumber || undefined,
           carType,
+          emoji,
           clientName: clientName || undefined,
           deliveryDate: deliveryDate || undefined,
         },
@@ -188,7 +195,10 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
     return (
       <div className="border border-zinc-800 bg-zinc-950/60 rounded-lg p-3 flex flex-col gap-1">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h4 className="font-semibold text-zinc-100 font-mono tracking-wide break-all">{car.chassisNumber}</h4>
+          <h4 className="font-semibold text-zinc-100 font-mono tracking-wide break-all">
+            <span className="me-2 font-sans">{car.emoji}</span>
+            {car.chassisNumber}
+          </h4>
           <div className="flex gap-2 shrink-0">
             <button type="button" className="btn-secondary" onClick={startEdit}>
               עריכה
@@ -234,10 +244,12 @@ function UnassignedCarRow({ car, editing, onStartEdit, onStopEdit }: UnassignedC
     <form onSubmit={handleSave} className="border border-zinc-800 bg-zinc-950/60 rounded-lg p-3 flex flex-col gap-2">
       <h4 className="font-semibold text-zinc-100 font-mono tracking-wide">{car.chassisNumber}</h4>
       <CarFieldsInputs
+        emoji={emoji}
         licensePlateNumber={licensePlateNumber}
         carType={carType}
         clientName={clientName}
         deliveryDate={deliveryDate}
+        onEmojiChange={setEmoji}
         onLicensePlateNumberChange={setLicensePlateNumber}
         onCarTypeChange={setCarType}
         onClientNameChange={setClientName}

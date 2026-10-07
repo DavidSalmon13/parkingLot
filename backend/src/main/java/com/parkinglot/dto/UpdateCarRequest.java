@@ -9,6 +9,7 @@ public record UpdateCarRequest(
     @Size(max = 20, message = "עד 20 תווים") String licensePlateNumber,
     @NotBlank(message = "חובה למלא") @Size(max = 50, message = "עד 50 תווים") String carType,
     @Size(max = 100, message = "עד 100 תווים") String clientName,
-    LocalDate deliveryDate
+    LocalDate deliveryDate,
+    @Size(max = 16, message = "עד 16 תווים") String emoji
 ) {
 }

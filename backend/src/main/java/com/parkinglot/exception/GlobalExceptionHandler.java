@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
         Map.entry("carType", "סוג רכב"),
         Map.entry("clientName", "שם הלקוח"),
         Map.entry("deliveryDate", "תאריך אספקה"),
+        Map.entry("emoji", "אימוג'י"),
         Map.entry("carId", "מספר רכב"),
         Map.entry("rows", "שורות"),
         Map.entry("count", "כמות")

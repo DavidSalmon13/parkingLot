@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCarDetail } from '../api/cars';
 import { useRemoveCar, useUpdateCar } from '../hooks/useMutations';
 import { ApiError } from '../api/client';
-import { CarFieldsInputs } from './CarFieldsInputs';
+import { CarFieldsInputs, DEFAULT_CAR_EMOJI } from './CarFieldsInputs';
 import type { Spot } from '../types';
 
 interface CarDetailPanelProps {
@@ -15,6 +15,7 @@ interface CarDetailPanelProps {
 export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) {
   const [confirmingRemove, setConfirmingRemove] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [emoji, setEmoji] = useState(DEFAULT_CAR_EMOJI);
   const [licensePlateNumber, setLicensePlateNumber] = useState('');
   const [carType, setCarType] = useState('');
   const [clientName, setClientName] = useState('');
@@ -33,6 +34,7 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
   const startEditing = () => {
     if (!car) return;
     updateCar.reset();
+    setEmoji(car.emoji);
     setLicensePlateNumber(car.licensePlateNumber ?? '');
     setCarType(car.carType);
     setClientName(car.clientName ?? '');
@@ -49,6 +51,7 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
         payload: {
           licensePlateNumber: licensePlateNumber || undefined,
           carType,
+          emoji,
           clientName: clientName || undefined,
           deliveryDate: deliveryDate || undefined,
         },
@@ -75,7 +78,10 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
 
         {car && !editing && (
           <div className="mt-2 flex flex-col gap-2">
-            <h3 className="text-xl font-semibold text-zinc-100 font-mono tracking-wide">{car.chassisNumber}</h3>
+            <h3 className="text-xl font-semibold text-zinc-100 font-mono tracking-wide">
+              <span className="me-2 font-sans">{car.emoji}</span>
+              {car.chassisNumber}
+            </h3>
             {car.clientName && <p className="text-zinc-200">{car.clientName}</p>}
             {car.licensePlateNumber && <p className="text-sm text-zinc-400">מספר רישוי: {car.licensePlateNumber}</p>}
             <p className="text-sm text-zinc-400">סוג רכב: {car.carType}</p>
@@ -91,10 +97,12 @@ export function CarDetailPanel({ lotName, spot, onClose }: CarDetailPanelProps) 
         {car && editing && (
           <form onSubmit={handleSave} className="mt-4 flex flex-col gap-3">
             <CarFieldsInputs
+              emoji={emoji}
               licensePlateNumber={licensePlateNumber}
               carType={carType}
               clientName={clientName}
               deliveryDate={deliveryDate}
+              onEmojiChange={setEmoji}
               onLicensePlateNumberChange={setLicensePlateNumber}
               onCarTypeChange={setCarType}
               onClientNameChange={setClientName}

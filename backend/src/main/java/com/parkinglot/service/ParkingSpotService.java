@@ -50,7 +50,8 @@ public class ParkingSpotService {
     public SpotResponse toDto(ParkingSpot spot, Optional<CarAssignment> activeAssignment) {
         return activeAssignment
             .map(a -> new SpotResponse(spot.getId(), spot.getLabel(), spot.getRow(), spot.getPosition(),
-                "occupied", new CarSummaryResponse(a.getCar().getChassisNumber(), a.getCar().getLicensePlateNumber(), a.getCar().getCarType())))
+                "occupied", new CarSummaryResponse(a.getCar().getChassisNumber(), a.getCar().getLicensePlateNumber(), a.getCar().getCarType(),
+                    a.getCar().getEmoji())))
             .orElseGet(() -> new SpotResponse(spot.getId(), spot.getLabel(), spot.getRow(), spot.getPosition(),
                 "available", null));
     }

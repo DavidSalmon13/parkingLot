@@ -9,6 +9,7 @@ public record CarDetailResponse(
     String carType,
     String clientName,
     LocalDate deliveryDate,
+    String emoji,
     CurrentLocation currentLocation
 ) {
     // assignedAt isn't in spec §3.10's literal response shape, but §5.6's

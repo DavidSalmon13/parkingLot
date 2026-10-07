@@ -37,7 +37,7 @@ public class CarService {
             throw new CarIdExistsException(req.chassisNumber());
         }
         Car saved = carRepo.save(new Car(req.chassisNumber(), req.licensePlateNumber(), req.carType(),
-            req.clientName(), req.deliveryDate()));
+            req.clientName(), req.deliveryDate(), req.emoji()));
         return toDetailResponse(saved, Optional.empty());
     }
 
@@ -48,6 +48,7 @@ public class CarService {
         car.setCarType(req.carType());
         car.setClientName(req.clientName());
         car.setDeliveryDate(req.deliveryDate());
+        car.setEmoji(req.emoji());
         Optional<CarAssignment> active = assignmentRepo.findByCar_ChassisNumberAndRemovedAtIsNull(carId);
         return toDetailResponse(car, active);
     }
@@ -80,6 +81,6 @@ public class CarService {
             .map(a -> new CarDetailResponse.CurrentLocation(a.getSpot().getLot().getName(), a.getSpot().getLabel(), a.getAssignedAt()))
             .orElse(null);
         return new CarDetailResponse(car.getChassisNumber(), car.getLicensePlateNumber(), car.getCarType(),
-            car.getClientName(), car.getDeliveryDate(), location);
+            car.getClientName(), car.getDeliveryDate(), car.getEmoji(), location);
     }
 }

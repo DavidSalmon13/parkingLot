@@ -2,6 +2,7 @@ export interface CarSummary {
   chassisNumber: string;
   licensePlateNumber: string | null;
   carType: string;
+  emoji: string;
 }
 
 export interface Spot {
@@ -26,6 +27,7 @@ export interface CarDetail {
   carType: string;
   clientName: string | null;
   deliveryDate: string | null;
+  emoji: string;
   currentLocation: { lotName: string; spotLabel: string; assignedAt: string } | null;
 }
 
@@ -43,6 +45,7 @@ export interface NewCarDetails {
   carType: string;
   clientName?: string;
   deliveryDate?: string;
+  emoji?: string;
 }
 
 export interface AssignCarPayload {
@@ -55,6 +58,7 @@ export interface UpdateCarPayload {
   carType: string;
   clientName?: string;
   deliveryDate?: string;
+  emoji?: string;
 }
 
 export interface CreateCarPayload extends UpdateCarPayload {
